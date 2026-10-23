@@ -1,0 +1,2199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Calculadora REAL | RealEcom</title>
+<link rel="icon" type="image/png" href="favicon.png" sizes="256x256">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ============================================================
+   DESIGN SYSTEM — RealEcom v2
+   Fontes: Outfit (títulos) + DM Sans (corpo)
+   Sidebar B: acompanha o tema
+   ============================================================ */
+
+/* VARIÁVEIS ESCURO (padrão) */
+:root{
+  --bg:#111113;
+  --bg2:#18181c;
+  --card:#1c1c20;
+  --border:#2a2a2e;
+  --border2:#333338;
+  --text:#f0f0f0;
+  --text2:#d8d8d8;
+  --text3:#aaaaaa;
+  --text4:#666666;
+  --sb-bg:#0a0a0d;
+  --sb-border:#1c1c20;
+  --sb-hover:#1c1c20;
+  --input-bg:#141418;
+  --input-border:#2a2a2e;
+  --mark:#F2D024; --mark-fg:#1A1500; --mark-soft:#F2D02426;
+  --in:#3DBD78;  --in-bg:#0F2A1B;  --in-line:#1B4630;
+  --out:#E0574F;
+  --seg-a:#3E3E47; --seg-b:#2E2E36; --seg-c:#4A3A20; --seg-d:#4A2A28;
+  --o:#F0A070;
+  --p:#7c6af7;
+  --p2:#9d8af7;
+}
+
+/* VARIÁVEIS CLARO */
+body.light{
+  --bg:#f7f7f5;
+  --bg2:#f0f0ee;
+  --card:#ffffff;
+  --border:#e8e8e4;
+  --border2:#d0d0cc;
+  --text:#111111;
+  --text2:#333333;
+  --text3:#666666;
+  --text4:#aaaaaa;
+  --sb-bg:#ebebeb;
+  --sb-border:#ddd;
+  --sb-hover:#e0e0de;
+  --input-bg:#f0f0ee;
+  --input-border:#e0e0dc;
+  --mark:#FFE94D; --mark-fg:#1A1500; --mark-soft:#FFE94D80;
+  --in:#0F7A3D;  --in-bg:#E8F4EC;  --in-line:#C4E2CF;
+  --out:#B3352D;
+  --seg-a:#C6C6CB; --seg-b:#DDDDE1; --seg-c:#E8D9A8; --seg-d:#EBC0BC;
+  --o:#ea580c;
+  --p:#6B21A8;
+  --p2:#7c3aed;
+}
+
+body{font-family:'Figtree',sans-serif;font-variant-numeric:tabular-nums;background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
+.page{display:none}.page.active{display:block}
+
+/* ============================================================ SIDEBAR ============================================================ */
+.sidebar{position:fixed;top:0;left:0;width:60px;height:100vh;background:var(--sb-bg);border-right:1px solid var(--sb-border);display:flex;flex-direction:column;padding:10px 8px;gap:2px;z-index:500;overflow:hidden;transition:width .18s cubic-bezier(.3,.9,.4,1),box-shadow .18s,background .2s}
+.sidebar:hover{width:196px;box-shadow:8px 0 32px rgba(0,0,0,.3)}
+body.light .sidebar:hover{box-shadow:8px 0 32px rgba(0,0,0,.09)}
+
+/* lista rolável — impede que os últimos itens sumam em tela baixa */
+.sb-wrap{flex:1;min-height:0;position:relative;display:flex;flex-direction:column}
+.sb-lista{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:1px;scrollbar-width:none;scroll-behavior:smooth}
+.sb-lista::-webkit-scrollbar{display:none}
+
+/* indicador de que há mais itens abaixo */
+.sb-fade{position:absolute;left:0;right:0;bottom:0;height:42px;pointer-events:none;background:linear-gradient(180deg,transparent,var(--sb-bg) 72%);opacity:0;transition:opacity .2s}
+.sb-fade.on{opacity:1}
+.sb-more{position:absolute;left:50%;transform:translateX(-50%);bottom:3px;width:22px;height:16px;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--text3);opacity:0;transition:opacity .2s;pointer-events:none;cursor:pointer;animation:sbBob 1.6s ease-in-out infinite}
+.sb-more.on{opacity:1;pointer-events:auto}
+@keyframes sbBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(2px)}}
+@media(prefers-reduced-motion:reduce){.sb-more{animation:none}}
+
+/* rodapé sempre visível */
+.sb-pe{flex-shrink:0;border-top:1px solid var(--sb-border);padding-top:7px;margin-top:5px;display:flex;flex-direction:column;gap:1px}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:4px 6px;margin-bottom:7px;cursor:pointer;flex-shrink:0;border-radius:9px}
+.sb-logo img{flex-shrink:0}
+.sb-logo img{width:38px;height:38px;object-fit:contain}
+.sb-item{display:flex;align-items:center;gap:11px;padding:5px 6px;border-radius:9px;cursor:pointer;transition:background .13s,color .13s;position:relative;flex-shrink:0;border:none;background:none;width:100%;text-align:left;white-space:nowrap;color:var(--text2);font-family:inherit;font-size:.79rem;font-weight:500;overflow:hidden}
+.sb-item>svg,.sb-item>div:first-child,.sb-item>span:first-child{flex-shrink:0}
+.sb-item>svg{width:32px;height:32px;padding:6px}
+.sb-rot{opacity:0;transition:opacity .14s}
+.sidebar:hover .sb-rot{opacity:1;transition-delay:.04s}
+.sb-item:hover{background:var(--sb-hover)}
+.sb-item.active{background:var(--sb-hover)}
+.sidebar:hover .sb-tooltip{opacity:0!important;visibility:hidden}
+.sb-tooltip{position:absolute;left:52px;background:var(--card);color:var(--text);font-size:.72rem;font-weight:600;padding:5px 10px;border-radius:6px;white-space:nowrap;border:1px solid var(--border);pointer-events:none;opacity:0;transition:opacity .15s;z-index:600;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.sidebar:not(:hover) .sb-item:hover .sb-tooltip{opacity:1}
+.sb-spacer{flex:1}
+.sb-avatar{display:flex;align-items:center;gap:11px;padding:5px 6px;border-radius:9px;cursor:pointer;border:none;background:none;width:100%;text-align:left;white-space:nowrap;overflow:hidden;position:relative;flex-shrink:0;font-family:inherit;transition:background .13s}
+.sb-avatar:hover{background:var(--sb-hover)}
+.sb-avatar #sb-iniciais{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6B21A8,#9333ea);color:#fff;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-avatar .sb-rot{color:var(--text2);font-size:.79rem;font-weight:500}
+.sidebar:not(:hover) .sb-avatar:hover .sb-tooltip{opacity:1}
+.page.active:not(#page-login):not(#page-conectar){margin-left:60px}
+#page-conectar{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;background:var(--bg);margin-left:0!important}
+#page-conectar.active{display:flex!important;margin-left:0!important}
+#page-login{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden;background:var(--bg);margin-left:0!important}
+#page-login.active{display:flex!important;margin-left:0!important}
+.app-header{display:none}
+.sb-item.active{background:var(--sb-hover)!important}
+
+/* ============================================================ TIPOGRAFIA ============================================================ */
+h1,h2,.page-heading{font-family:'Figtree',sans-serif;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.page-subheading{font-family:'Figtree',sans-serif;font-size:.68rem;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:.08em}
+
+/* ============================================================ LAYOUT ============================================================ */
+.main-layout{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+@media(max-width:800px){.main-layout{grid-template-columns:1fr}}
+.left-panel{border-right:1px solid var(--border);padding:16px 14px;overflow-y:auto;background:var(--bg)}
+.right-panel{padding:16px 14px;overflow-y:auto;background:var(--bg)}
+.dash-page,.cal-page,.metas-page{padding:20px 18px;max-width:960px;margin:0 auto}
+
+/* ============================================================ CARDS ============================================================ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:7px}
+.card-title{font-family:'Figtree',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
+body.light .card-title{color:#333}
+body.light .card-title span[style*="color:#a78bfa"]{display:none}
+body.light .card-title span[style*="color:#60a5fa"]{display:none}
+/* No tema claro os ícones coloridos dos cards ficam com opacidade reduzida */
+body.light .left-panel .card-title > span:first-child{opacity:.7}
+
+/* Card de margem — roxo */
+.margem-card{background:linear-gradient(135deg,#2d1060,#4c1d95);border:1px solid #7c3aed55;border-radius:10px;padding:11px 13px;margin-bottom:7px}
+.margem-card .card-title{color:#e9d5ff}
+.margem-card input{background:rgba(255,255,255,.1)!important;border-color:#7c3aed88!important;color:#fff!important;font-size:1.1rem!important;font-weight:700!important;text-align:center}
+.margem-hint{font-size:.7rem;color:#c4b5fd;text-align:center;margin-top:4px}
+body.light .margem-card{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+body.light .margem-card .card-title{color:#4c1d95}
+body.light .margem-card input{background:rgba(107,33,168,.08)!important;border-color:#7c3aed55!important;color:#3b0764!important}
+body.light .margem-hint{color:#6B21A8}
+
+/* ============================================================ FORMULÁRIOS ============================================================ */
+.field{margin-bottom:8px}
+.field label{display:block;font-size:.72rem;color:var(--text3);margin-bottom:3px;font-weight:500}
+.field input,.field textarea,.item-input,.gest-input,.meta-input{width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);transition:border .15s,background .15s;font-family:'Figtree',sans-serif;outline:none;font-weight:500}
+.field input:focus,.field textarea:focus,.item-input:focus,.gest-input:focus,.meta-input:focus{border-color:var(--p);background:var(--card);color:var(--text)}
+body.light .field input,body.light .field textarea,body.light .item-input{background:#fff;border-color:#d0d0cc;color:#111}
+body.light .field input:focus,body.light .field textarea:focus,body.light .item-input:focus{border-color:#6B21A8;background:#fff}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+.note{font-size:.67rem;color:var(--text4);margin-top:3px}
+
+/* Selects */
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;border:1px solid var(--input-border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);outline:none;font-family:'Figtree',sans-serif}
+.modal-field select option{background:var(--card)}
+.modal-field label{display:block;font-size:.74rem;color:var(--text3);margin-bottom:4px;font-weight:500}
+
+/* ============================================================ BOTÕES ============================================================ */
+.btn-calc{width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:4px;font-family:'Figtree',sans-serif;transition:opacity .15s}
+.btn-calc:hover{opacity:.85}
+.btn-reset{width:100%;padding:9px;background:transparent;color:var(--text3);border:1px solid var(--border);border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:6px;font-family:'Figtree',sans-serif;transition:all .15s}
+.btn-reset:hover{border-color:var(--text3);color:var(--text)}
+.btn-back{background:var(--card);color:var(--text3);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif}
+.btn-back:hover{color:var(--text);border-color:var(--border2)}
+.btn-save{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:5px;font-family:'Figtree',sans-serif}
+.btn-confirm{flex:1;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer}
+.btn-cancel{flex:1;padding:10px;background:var(--card);color:var(--text3);border:1px solid var(--border);border-radius:9px;font-size:.88rem;font-weight:600;cursor:pointer}
+
+/* ============================================================ TOGGLE ============================================================ */
+.toggle-row{display:flex;gap:6px;margin-bottom:9px}
+.toggle-btn{flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text4);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Figtree',sans-serif}
+.toggle-btn.active{border-color:var(--text);background:var(--text);color:var(--bg)}
+body.light .toggle-btn.active{background:#111;color:#fff;border-color:#111}
+
+/* ============================================================ ITEMS / LISTAS ============================================================ */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.row4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+@media(max-width:480px){.row4{grid-template-columns:1fr 1fr}}
+.item-list{display:flex;flex-direction:column;gap:5px}
+.item-row{display:grid;grid-template-columns:1fr 32px;gap:5px;align-items:center}
+.add-item{background:none;border:1px dashed var(--border);color:var(--text4);border-radius:8px;padding:6px;font-size:.74rem;cursor:pointer;width:100%;margin-top:5px;transition:all .15s;font-family:'Figtree',sans-serif}
+.add-item:hover{border-color:var(--text3);color:var(--text3)}
+.remove-btn{background:none;border:none;color:#f87171;width:32px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:none;align-items:center;justify-content:center}
+
+/* ============================================================ FRETE ============================================================ */
+.peso-info{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 11px;margin-top:6px;font-size:.76rem;display:none;flex-wrap:wrap;gap:10px}
+.peso-info .pi{color:var(--text3)}.peso-info .pi strong{color:var(--text)}
+.frete-wrap{overflow-x:auto;margin-top:7px}
+.ft{width:100%;border-collapse:collapse;font-size:.65rem}
+.ft th{background:var(--card);padding:5px 4px;text-align:center;font-weight:600;color:var(--text4);border:1px solid var(--border);white-space:nowrap}
+.ft td{padding:5px 4px;text-align:center;border:1px solid var(--border);color:var(--text3)}
+.ft td.pcol{font-weight:600;text-align:left;white-space:nowrap;background:var(--card);color:var(--text3);padding-left:6px}
+.ft td.fopt{cursor:pointer;transition:all .15s}.ft td.fopt:hover{background:var(--bg2);color:var(--text);font-weight:600}
+.ft td.fsel{background:var(--text)!important;color:var(--bg)!important;font-weight:700}
+.ft tr.dim{opacity:.3}
+.frete-badge{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:.77rem;color:var(--text2);font-weight:600;margin-top:6px;display:none}
+
+/* ============================================================ RESULTADOS DA CALCULADORA ============================================================ */
+.right-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;opacity:.2;text-align:center;gap:10px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+@media(max-width:480px){.price-grid{grid-template-columns:1fr}}
+.price-card{border-radius:14px;padding:14px;text-align:center;color:#fff}
+.price-card.calc{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
+.price-card.ml-cheaper{background:linear-gradient(145deg,#052e16,#166534);border:1px solid #16a34a55}
+.price-card.ml-pricier{background:linear-gradient(145deg,#7f1d1d,#991b1b);border:1px solid #ef444455}
+.price-card.ml-equal{background:linear-gradient(145deg,#1e3a1e,#2d5a2d);border:1px solid #16a34a44}
+.price-card.ml-none{background:linear-gradient(145deg,#1e1a2e,#2a2040);border:1px solid #333}
+.pc-tag{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:4px}
+.pc-price{font-family:'Figtree',sans-serif;font-size:1.75rem;font-weight:800;letter-spacing:-.02em;margin-bottom:5px}
+.pc-badge{display:inline-block;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.18);font-size:.65rem;font-weight:700;margin-bottom:9px}
+.pc-kpis{display:flex;justify-content:space-around;border-top:1px solid rgba(255,255,255,.1);padding-top:8px}
+.pc-kpi .pkl{font-size:.56rem;opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.pc-kpi .pkv{font-size:.88rem;font-weight:800}
+.pc-kpi .pks{font-size:.54rem;opacity:.4;margin-top:1px}
+
+/* ============================================================ BREAKDOWN ============================================================ */
+.explain-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:9px;font-size:.77rem;color:var(--text3);line-height:1.6}
+.explain-box .ex-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:6px}
+.breakdown{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px}
+.bd-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:8px}
+body.light .bd-title{color:#333}
+.brow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.77rem}
+.brow:last-child{border:none}
+.brow .bl{color:var(--text3)}.brow .br{color:var(--text2);font-weight:600}
+body.light .brow .br{color:#111;font-weight:600}
+body.light .brow.total .br{color:#111;font-weight:800}
+.brow.total{padding-top:8px;border-top:1px solid var(--border2);border-bottom:none;margin-top:2px}
+.brow.total .bl{color:var(--text);font-weight:700}
+.brow.total .br{color:var(--text);font-weight:800;font-size:.88rem}
+.brow.highlight .br{color:var(--o)}
+
+/* ============================================================ SAVE CARD ============================================================ */
+.save-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:9px}
+.save-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text);margin-bottom:9px}
+body.light .save-title{color:#333}
+
+/* ============================================================ DASHBOARD ============================================================ */
+.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.dash-header h2{font-family:'Figtree',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.pd-item{background:var(--bg2);border-radius:8px;padding:8px 10px}
+.pd-item .pdl{font-size:.6rem;color:var(--text4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.pd-item .pdv{font-size:.84rem;font-weight:700;color:var(--text2)}
+.prod-obs{width:100%;background:var(--input-bg);border:1px solid var(--input-border);border-radius:7px;padding:7px 10px;font-size:.74rem;color:var(--text2);resize:none;height:48px;outline:none;font-family:'Figtree',sans-serif;margin-top:3px;display:block}
+.btn-del{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 6px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.btn-del:hover{background:#f8717118;border-color:#f87171}
+.btn-del svg{width:14px;height:14px;stroke:var(--text4);transition:stroke .15s}
+.btn-del:hover svg{stroke:#f87171}
+
+/* ============================================================ CALENDÁRIO ============================================================ */
+.cal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.cal-nav{display:flex;align-items:center;gap:12px}
+.cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text3);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.84rem;font-family:'Figtree',sans-serif}
+.cal-nav h3{font-family:'Figtree',sans-serif;font-size:.98rem;font-weight:700;color:var(--text);min-width:160px;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px}
+.cal-day-header{text-align:center;font-size:.65rem;font-weight:700;color:var(--text4);padding:6px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-day{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 5px;min-height:68px;cursor:pointer;transition:border .15s;position:relative}
+.cal-day:hover{border-color:var(--border2)}
+.cal-day.today{border-color:var(--p)}
+.cal-day.other-month{opacity:.3}
+.cal-day .day-num{font-size:.75rem;font-weight:700;color:var(--text3);margin-bottom:3px}
+.cal-day.today .day-num{color:var(--p)}
+.cal-event{font-size:.6rem;border-radius:3px;padding:2px 4px;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.cal-event.full{background:#7c3aed22;color:#a78bfa;border-left:2px solid #7c3aed}
+.cal-event.conta{background:#dc262622;color:#f87171;border-left:2px solid #dc2626}
+.cal-event.entrega{background:#16a34a22;color:#4ade80;border-left:2px solid #16a34a}
+.cal-event.outro{background:#33333322;color:var(--text3);border-left:2px solid var(--border2)}
+.cal-event.sazonal{background:#d9770622;color:#fbbf24;border-left:2px solid #d97706}
+.cal-event.giro_pedido{background:#7c3aed22;color:#a78bfa;border-left:2px solid #7c3aed}
+.cal-event.giro_entrega{background:#16a34a22;color:#4ade80;border-left:2px solid #16a34a}
+.cal-event-more{font-size:.56rem;color:var(--text4);padding:1px 3px}
+body.light .cal-day{background:#fff}
+body.light .cal-day.today{border-color:#6B21A8}
+body.light .cal-day.today .day-num{color:#6B21A8}
+body.light .cal-event.full{background:#ede9fe;color:#6B21A8}
+body.light .cal-event.conta{background:#fee2e2;color:#dc2626}
+body.light .cal-event.entrega{background:#dcfce7;color:#16a34a}
+body.light .cal-event.outro{background:#f5f5f3;color:#666}
+body.light .cal-event.sazonal{background:#fef3c7;color:#b45309}
+
+/* ============================================================ MODAL ============================================================ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;width:100%;max-width:400px;margin:20px}
+.modal h3{font-family:'Figtree',sans-serif;font-size:.98rem;font-weight:800;color:var(--text);margin-bottom:14px}
+.modal-field{margin-bottom:10px}
+.modal-btns{display:flex;gap:8px;margin-top:14px}
+
+/* ============================================================ NOTIFICAÇÕES ============================================================ */
+.notif-container{position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:300px}
+.notif{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.8rem;color:var(--text);animation:slideIn .3s ease;display:flex;gap:9px;align-items:flex-start}
+.notif.full{border-color:#7c3aed55}.notif.conta{border-color:#dc262655}.notif.entrega{border-color:#16a34a55}.notif.outro{border-color:var(--border2)}
+.notif-icon{font-size:1.1rem;flex-shrink:0}
+.notif-body .notif-title{font-weight:700;margin-bottom:2px}
+.notif-body .notif-sub{font-size:.72rem;color:var(--text3)}
+.notif-close{background:none;border:none;color:var(--text4);cursor:pointer;font-size:.9rem;margin-left:auto;flex-shrink:0}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ============================================================ HOME ============================================================ */
+.home-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 18px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:block;color:inherit;user-select:none}
+.home-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+@media(max-width:720px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:420px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}}
+#page-home *:not(input):not(textarea):not(button){cursor:default}
+#page-home .home-card,#page-home .home-card *{cursor:pointer}
+
+body.light 
+
+/* ============================================================ LOGIN ============================================================ */
+#page-login{min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;position:relative;overflow:hidden;background:var(--bg);display:none}
+#page-login.active{display:flex!important;margin-left:0!important}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:420px;position:relative;z-index:1}
+@media(max-width:480px){.login-box{padding:28px 20px}}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo img{height:64px;object-fit:contain;filter:none}
+body.light .login-logo img{filter:none}
+.login-title{font-family:'Figtree',sans-serif;text-align:center;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:5px}
+.login-sub{text-align:center;font-size:.76rem;color:var(--text3);margin-bottom:28px;line-height:1.6}
+.login-field{margin-bottom:12px}
+.login-field label{display:block;font-size:.72rem;color:var(--text3);font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.login-input{width:100%;padding:12px 14px;border:1px solid var(--input-border);border-radius:10px;font-size:.95rem;font-weight:600;color:var(--text);background:var(--input-bg);outline:none;transition:border .15s;font-family:'Figtree',sans-serif}
+.login-input:focus{border-color:var(--p)}
+.login-input::placeholder{font-weight:400;color:var(--text4)}
+.btn-login{width:100%;padding:13px;background:var(--text);color:var(--bg);border:none;border-radius:10px;font-size:.92rem;font-weight:800;cursor:pointer;margin-top:5px;font-family:'Figtree',sans-serif;transition:opacity .15s}
+.btn-login:hover{opacity:.85}.btn-login:disabled{opacity:.4;cursor:not-allowed}
+.login-erro{background:#f8717110;border:1px solid #f8717130;border-radius:8px;padding:9px 12px;font-size:.76rem;color:#f87171;margin-top:10px;text-align:center;display:none;line-height:1.5}
+.login-loading{display:none;text-align:center;margin-top:10px;font-size:.76rem;color:var(--text3)}
+.login-loading span{display:inline-block;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.login-footer{margin-top:20px;text-align:center;font-size:.7rem;color:var(--text4);line-height:1.7}
+.login-footer a{color:var(--p);text-decoration:none;font-weight:600}
+.login-validade{background:#16a34a15;border:1px solid #16a34a30;border-radius:8px;padding:9px 12px;font-size:.74rem;color:#4ade80;margin-top:12px;text-align:center;display:none}
+.login-badge{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:.68rem;color:var(--text3);font-weight:600;margin-bottom:16px}
+.btn-sair{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 11px;cursor:pointer;font-size:.72rem;color:var(--text4);font-weight:600;transition:all .15s}
+.btn-sair:hover{border-color:#f87171;color:#f87171}
+
+/* ============================================================ METAS ============================================================ */
+.meta-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.meta-card-title{font-family:'Figtree',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:10px}
+.meta-progress-bar{height:8px;background:var(--bg2);border-radius:20px;overflow:hidden;margin:7px 0}
+.meta-progress-fill{height:100%;border-radius:20px;transition:width .5s ease;background:linear-gradient(90deg,#6B21A8,#9333ea)}
+.meta-stat{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;margin-top:5px}
+.meta-stat .ms-label{color:var(--text3)}.meta-stat .ms-value{font-weight:700;color:var(--text)}
+.nota-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.nota-display{font-family:'Figtree',sans-serif;font-size:3rem;font-weight:800;text-align:center;color:var(--text);line-height:1}
+.nota-label{text-align:center;font-size:.68rem;color:var(--text4);margin-top:4px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+.nota-slider{width:100%;accent-color:var(--p);margin:7px 0}
+.btn-salvar-meta{width:100%;padding:10px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:7px;font-family:'Figtree',sans-serif}
+.tempo-display{font-family:'Figtree',sans-serif;font-size:2rem;font-weight:800;color:var(--text);text-align:center;margin:7px 0}
+.btn-timer{padding:9px 18px;border:none;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;margin:3px;font-family:'Figtree',sans-serif}
+.btn-timer.start{background:#16a34a;color:#fff}
+.btn-timer.stop{background:#dc2626;color:#fff}
+.btn-timer.reset{background:var(--card);color:var(--text3);border:1px solid var(--border)}
+
+/* ============================================================ GESTÃO ============================================================ */
+.gest-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:600px){.gest-summary{grid-template-columns:1fr 1fr}}
+.gest-kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.gest-kpi .gk-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:5px}
+.gest-kpi .gk-val{font-family:'Figtree',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text)}
+.gest-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:640px){.gest-cols{grid-template-columns:1fr}}
+.gest-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px}
+.gest-card-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:10px}
+.gest-lista{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px}
+.gest-form{display:grid;gap:6px;margin-bottom:9px}
+
+/* ============================================================ TOGGLE TEMA ============================================================ */
+.theme-toggle{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.76rem;color:var(--text3);font-weight:600;transition:all .15s;white-space:nowrap}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text)}
+.btn-home{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:.76rem;color:var(--text3);font-weight:600;transition:all .15s;white-space:nowrap}
+.btn-dash{background:var(--text);color:var(--bg);border:none;border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Figtree',sans-serif}
+
+/* ===== RESULTADO — sistema de destaque ===== */
+.mk,
+.brow .br .mk, .brow.total .br .mk,
+body.light .brow .br .mk, body.light .brow.total .br .mk,
+.price-card .mk, .pcl-val .mk,
+span .mk, div .mk{
+  background:var(--mark)!important; color:var(--mark-fg)!important;
+  padding:3px 10px;border-radius:6px;display:inline-block;font-weight:700;
+  -webkit-text-fill-color:var(--mark-fg)
+}
+.mk2{box-shadow:inset 0 -10px 0 var(--mark-soft);padding:0 4px}
+.r-eb{font-size:.68rem;font-weight:600;color:var(--text3);letter-spacing:.09em;text-transform:uppercase}
+.r-hero{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;margin-bottom:14px}
+.r-hero .v{font-size:2rem;font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:7px}
+.r-second{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end;padding-top:15px;border-top:1px solid var(--border);margin-bottom:26px}
+.r-second .v{font-size:1.25rem;font-weight:700;line-height:1.15;margin-top:6px}
+.r-second .quiet{font-size:1.25rem;font-weight:600;color:var(--text2);line-height:1.15;margin-top:6px}
+.r-bar{display:flex;height:36px;border-radius:7px;overflow:hidden;margin:9px 0 12px;background:var(--bg2)}
+.r-bar div{flex-grow:0;flex-basis:0;transition:flex-grow .55s cubic-bezier(.22,.9,.3,1),opacity .18s,filter .18s}
+.r-go .r-bar div{flex-grow:var(--g)}
+.r-go .r-bar div:nth-child(2){transition-delay:55ms}
+.r-go .r-bar div:nth-child(3){transition-delay:110ms}
+.r-go .r-bar div:nth-child(4){transition-delay:165ms}
+.r-go .r-bar div:nth-child(5){transition-delay:220ms}
+.r-bar:hover div{opacity:.32}
+.r-bar div:hover{opacity:1;filter:brightness(1.12)}
+.r-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:28px}
+.r-lg{display:flex;align-items:center;gap:6px;font-size:.76rem;color:var(--text2)}
+.r-lg i{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.r-lg b{color:var(--text);font-weight:600}
+.brow .br.out{color:var(--out)}
+.r-rv{opacity:0;transform:translateY(8px)}
+.r-go .r-rv{opacity:1;transform:none;transition:opacity .4s cubic-bezier(.22,.9,.3,1),transform .4s cubic-bezier(.22,.9,.3,1)}
+.r-go .r-rv:nth-child(2){transition-delay:50ms}
+.r-go .r-rv:nth-child(3){transition-delay:100ms}
+.r-go .r-rv:nth-child(4){transition-delay:150ms}
+@media(prefers-reduced-motion:reduce){.r-rv{opacity:1;transform:none}.r-bar div{flex-grow:var(--g)}}
+
+.pc-lucro{margin:11px 0 10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14)}
+.pcl-lbl{font-size:.6rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.75;margin-bottom:5px}
+.pcl-val{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
+.pc-payout{font-size:.68rem;opacity:.8;margin-top:9px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1)}
+.pc-payout b{font-weight:700;opacity:1}
+
+/* ===== CABEÇALHO DE PÁGINA — reutilizável ===== */
+.pg-head{position:relative;overflow:hidden;border-radius:13px;padding:22px 22px 20px;margin-bottom:22px;
+  background:linear-gradient(180deg,var(--card),var(--bg));border:1px solid var(--border)}
+.pg-wm{position:absolute;right:-16px;top:-20px;width:138px;height:138px;color:var(--pg);opacity:.07;pointer-events:none}
+.pg-in{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.pg-brand{font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--text4);margin-bottom:7px}
+.pg-title{font-size:1.55rem;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1}
+.pg-sub{font-size:.76rem;color:var(--text3);margin-top:6px}
+.pg-stats{display:flex;gap:22px;margin-top:15px;flex-wrap:wrap}
+.pg-sl{font-size:.57rem;letter-spacing:.09em;text-transform:uppercase;color:var(--text4);margin-bottom:3px}
+.pg-sv{font-size:1rem;font-weight:700;color:var(--text)}
+.pg-acts{display:flex;gap:6px;flex-shrink:0}
+.mev{display:flex;align-items:center;gap:9px;width:100%;padding:7px 8px;border:none;background:none;border-radius:7px;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:500;color:var(--text2);text-align:left;transition:background .12s,color .12s}
+.mev:hover{background:var(--bg2);color:var(--text)}
+.mev-ic{width:19px;height:19px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3)}
+.cfg-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:20px;font-size:.72rem;font-weight:500;color:var(--text3);background:transparent;cursor:pointer;font-family:inherit;transition:all .15s}
+.cfg-chip:hover{border-color:var(--text3);color:var(--text)}
+.cfg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cal-nav-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:1rem;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-family:inherit}
+.cal-nav-btn:hover{border-color:var(--text3);color:var(--text)}
+.pg-btn{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:var(--bg);border:none;
+  border-radius:8px;padding:7px 13px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+@media(max-width:560px){.pg-title{font-size:1.3rem}.pg-stats{gap:16px}}
+
+/* ===== resultado: payout no card, compra e simulação ===== */
+.pc-duo{display:flex;gap:14px;margin:11px 0 10px;padding:9px 0;
+  border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15)}
+.pc-duo>div{flex:1;min-width:0}
+.pc-duo .pcl-lbl{font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75;margin-bottom:5px}
+.pc-duo .pcl-val{font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+
+.info{width:15px;height:15px;border-radius:50%;border:1px solid var(--text4);color:var(--text4);
+  font-size:.6rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;
+  cursor:help;position:relative;flex-shrink:0;margin-left:5px;vertical-align:middle}
+.info:hover{border-color:var(--text2);color:var(--text2)}
+.info .tip{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;width:280px;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 13px;
+  font-size:.74rem;font-weight:400;color:var(--text2);line-height:1.6;text-align:left;
+  opacity:0;visibility:hidden;transition:opacity .15s;z-index:60;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);text-transform:none;letter-spacing:0}
+.info:hover .tip{opacity:1;visibility:visible}
+.info .tip b{color:var(--text);font-weight:600}
+
+.compra-box{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:15px 17px;margin-bottom:9px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.compra-txt{flex:1;min-width:200px}
+.compra-val{font-size:1.7rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-top:8px}
+.compra-hoje{font-size:.74rem;color:var(--text3);margin-top:7px}
+.compra-eco{text-align:right;min-width:130px}
+.compra-eco-val{font-size:1.35rem;font-weight:700;color:var(--in);letter-spacing:-.02em;margin-top:6px}
+
+.sim-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:9px}
+.sim-tab{width:100%;border-collapse:collapse}
+.sim-tab th{font-size:.58rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text4);
+  padding:0 9px 8px 0;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.sim-tab th:first-child{text-align:left}
+.sim-tab td{padding:10px 9px 10px 0;text-align:right;font-size:.84rem;font-weight:600;
+  border-bottom:1px solid var(--bg2);white-space:nowrap}
+.sim-tab td:first-child{text-align:left}
+.sim-tab tr:last-child td{border-bottom:none}
+.sim-tab tr.atual td{background:var(--mark-soft)}
+.sim-tab tr.atual td:first-child{border-radius:7px 0 0 7px}
+.sim-tab tr.atual td:last-child{border-radius:0 7px 7px 0}
+.mg-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700;
+  background:var(--bg2);color:var(--text2)}
+tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
+.sim-nota{font-size:.7rem;color:var(--text4);margin-top:10px;line-height:1.6}
+
+/* ===== CENTRAL DE AULAS ===== */
+.aula-modulo{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.aula-modulo-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.aula-modulo-header:hover{background:var(--bg2)}
+.aula-badge{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.aula-modulo-titulo{font-size:.86rem;font-weight:700;color:var(--text);flex:1}
+.aula-modulo-sub{font-size:.68rem;color:var(--text4);margin-top:1px}
+.aula-modulo-progresso{font-size:.7rem;font-weight:700;color:var(--text3);flex-shrink:0;white-space:nowrap}
+.aula-chevron{width:16px;height:16px;color:var(--text4);flex-shrink:0;transition:transform .18s}
+.aula-modulo.aberto .aula-chevron{transform:rotate(180deg)}
+.aula-modulo-bar{height:4px;background:var(--bg2)}
+.aula-modulo-bar-fill{height:100%;background:var(--in);transition:width .3s ease}
+.aula-modulo-conteudo{display:none;border-top:1px solid var(--border)}
+.aula-modulo.aberto .aula-modulo-conteudo{display:block}
+.aula-subgrupo-titulo{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:11px 16px 5px}
+.aula-item{display:flex;align-items:center;gap:11px;padding:10px 16px;border-top:1px solid var(--bg2);transition:background .12s}
+.aula-item:first-child{border-top:none}
+.aula-item:hover{background:var(--bg2)}
+.aula-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:transparent;transition:all .15s}
+.aula-check:hover{border-color:var(--in)}
+.aula-item.assistida .aula-check{background:var(--in);border-color:var(--in);color:var(--bg)}
+.aula-icon{width:30px;height:30px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text3)}
+.aula-item.assistida .aula-icon{color:var(--text4)}
+.aula-corpo{flex:1;min-width:0;cursor:pointer}
+.aula-titulo{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.3}
+.aula-item.assistida .aula-titulo{color:var(--text3)}
+.aula-desc{font-size:.7rem;color:var(--text4);margin-top:2px;line-height:1.4}
+.aula-abrir{width:16px;height:16px;color:var(--text4);flex-shrink:0}
+</style>
+</head>
+<body>
+
+
+<!-- SIDEBAR GLOBAL -->
+<div class="sidebar" id="sidebar" style="display:none">
+  <div class="sb-logo" onclick="showPage('home')">
+    <img src="logcon.png" alt="RealEcom" style="width:32px;height:32px;object-fit:contain"><span class="sb-rot" style="font-size:.84rem;font-weight:700;color:var(--text)">RealEcom</span>
+  </div>
+  <div class="sb-wrap">
+  <div class="sb-lista" id="sbLista">
+  <button class="sb-item" id="sb-home" onclick="showPage('home')" title="Home">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="sb-tooltip">Home</span><span class="sb-rot">Home</span>
+  </button>
+  <button class="sb-item" id="sb-calc" onclick="showPage('calc')" title="Calculadora">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+    </div>
+    <span class="sb-tooltip">Calculadora</span><span class="sb-rot">Calculadora</span>
+  </button>
+  <button class="sb-item" id="sb-dash" onclick="showPage('dash')" title="Dashboard">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </div>
+    <span class="sb-tooltip">Dashboard</span><span class="sb-rot">Dashboard</span>
+  </button>
+  <button class="sb-item" id="sb-cal" onclick="showPage('cal')" title="Calendário">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <span class="sb-tooltip">Calendário</span><span class="sb-rot">Calendário</span>
+  </button>
+  <button class="sb-item" id="sb-gestao" onclick="showPage('gestao')" title="Calculadora de Giro">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+    </div>
+    <span class="sb-tooltip">Calc. de Giro</span><span class="sb-rot">Calc. de Giro</span>
+  </button>
+  <button class="sb-item" id="sb-simples" onclick="showPage('simples')" title="Simples Nacional">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    </div>
+    <span class="sb-tooltip">Simples Nacional</span><span class="sb-rot">Simples Nacional</span>
+  </button>
+  <button class="sb-item" id="sb-pub" onclick="showPage('pub')" title="Publicidade ROAS/ACOS">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+    </div>
+    <span class="sb-tooltip">Publicidade ROAS/ACOS</span><span class="sb-rot">Publicidade ROAS/ACOS</span>
+  </button>
+  <a class="sb-item" id="sb-inpi" href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" title="INPI">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <span class="sb-tooltip">INPI</span><span class="sb-rot">INPI</span>
+  </a>
+  <button class="sb-item" id="sb-fin" onclick="showPage('fin')" title="Financeiro">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+    </div>
+    <span class="sb-tooltip">Financeiro</span><span class="sb-rot">Financeiro</span>
+  </button>
+  <button class="sb-item" id="sb-conc" onclick="showPage('conc')" title="Conciliação ML/MP">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="12" y2="9"/></svg>
+    </div>
+    <span class="sb-tooltip">Conciliação ML/MP</span><span class="sb-rot">Conciliação ML/MP</span>
+  </button>
+  <button class="sb-item" id="sb-prompt" onclick="showPage('prompt')" title="Prompt Fotos">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:9px;display:flex;align-items:center;justify-content:center">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+    <span class="sb-tooltip">Prompt Fotos ML</span><span class="sb-rot">Prompt Fotos ML</span>
+  </button>
+  </div>
+    <div class="sb-fade" id="sbFade"></div>
+    <div class="sb-more" id="sbMore" title="Mais ferramentas"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="sb-pe">
+  <button class="sb-item" onclick="toggleTheme()" title="Tema">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a89ec8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span class="sb-tooltip">Alternar tema</span><span class="sb-rot">Alternar tema</span>
+  </button>
+  <!-- Botão sair explícito -->
+  <button class="sb-item" onclick="sair()" title="Sair da conta" style="margin-bottom:4px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <span class="sb-tooltip">Sair da conta</span><span class="sb-rot" style="color:#f87171">Sair da conta</span>
+  </button>
+  <button class="sb-avatar" id="sb-avatar" title="Conta">
+    <span id="sb-iniciais">?</span>
+    <span class="sb-tooltip">Minha conta</span><span class="sb-rot">Minha conta</span>
+  </button>
+  </div>
+</div>
+
+<div class="notif-container" id="notif-container"></div>
+
+<!-- MODAL CALENDÁRIO -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" style="max-width:460px">
+    <h3 id="modal-title">📅 Novo Evento</h3>
+
+    <!-- Templates rápidos -->
+    <div id="modal-templates" style="margin-bottom:14px">
+      <div style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;font-weight:700">Templates rápidos</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button onclick="aplicarTemplate('das')" style="background:#dc262618;border:1px solid #dc262644;color:#f87171;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">💰 Pagar DAS</button>
+        <button onclick="aplicarTemplate('full')" style="background:#7c3aed18;border:1px solid #7c3aed44;color:#a78bfa;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">📦 Coleta Full</button>
+        <button onclick="aplicarTemplate('cartao')" style="background:#16a34a18;border:1px solid #16a34a44;color:#4ade80;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">💳 Pagar Cartão</button>
+        <button onclick="aplicarTemplate('estoque')" style="background:#F0A07018;border:1px solid #F0A07044;color:#F0A070;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">📊 Ver Estoque</button>
+        <button onclick="aplicarTemplate('fornecedor')" style="background:#2563eb18;border:1px solid #2563eb44;color:#60a5fa;border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:600;cursor:pointer">🚚 Fornecedor</button>
+      </div>
+    </div>
+
+    <div class="modal-field"><label>Título do evento</label><input type="text" id="ev-titulo" placeholder="Ex: Coleta Full, Vencimento conta..."></div>
+    <div class="modal-field"><label>Tipo</label>
+      <select id="ev-tipo">
+        <option value="full">📦 Coleta Full</option>
+        <option value="conta">💰 Vencimento de Conta</option>
+        <option value="entrega">🚚 Entrega</option>
+        <option value="outro">📌 Outro</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="modal-field"><label>Data</label><input type="date" id="ev-data"></div>
+      <div class="modal-field"><label>Hora (opcional)</label><input type="time" id="ev-hora"></div>
+    </div>
+    <div class="modal-field"><label>Local / Link (opcional)</label><input type="text" id="ev-local" placeholder="Ex: Galpão, Zoom, WhatsApp..."></div>
+    <div class="modal-field"><label>Observação (opcional)</label><input type="text" id="ev-obs" placeholder="Detalhes do evento..."></div>
+
+    <!-- Lembrete Push (desativado neste produto) -->
+    <div class="modal-field" style="display:none">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="ev-push" style="width:16px;height:16px;accent-color:var(--o)">
+        <span>Ativar notificação no navegador</span>
+      </label>
+      <div style="font-size:.68rem;color:var(--text3);margin-top:3px;padding-left:24px">Você receberá lembretes conforme o tipo do evento</div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="salvarEvento()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOME ===== -->
+
+<!-- ===== LOGIN ===== -->
+<div id="page-login" class="page active">
+  <div class="login-box">
+    <div class="login-logo"><img src="logo.png" alt="RealEcom"></div>
+    <div style="text-align:center;margin-bottom:6px">
+      <span class="login-badge">🔐 ACESSO EXCLUSIVO PARA SELLERS</span>
+    </div>
+    <div class="login-title">Calculadora REAL</div>
+    <div class="login-sub">Entre com seu e-mail e senha.<br>Primeiro acesso? Use o link “Crie sua senha” que chegou no e-mail da compra.</div>
+    <div class="login-field">
+      <label>E-mail</label>
+      <input class="login-input" type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" spellcheck="false" style="letter-spacing:0;text-transform:none;font-weight:600" onkeydown="if(event.key==='Enter')document.getElementById('login-senha').focus()">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <div style="position:relative">
+        <input class="login-input" type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password" style="letter-spacing:.15em;text-transform:none" onkeydown="if(event.key==='Enter')fazerLogin()">
+        <button onclick="toggleSenha()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:.85rem;color:var(--text2)" id="btn-ver-senha">👁</button>
+      </div>
+    </div>
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar →</button>
+    <div class="login-erro" id="login-erro"></div>
+    <div class="login-loading" id="login-loading"><span>Verificando...</span></div>
+    <div class="login-validade" id="login-validade"></div>
+    <div style="text-align:center;margin-top:12px">
+      <button onclick="esqueceuSenha()" style="background:none;border:none;color:var(--text2);font-size:.76rem;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
+    </div>
+    <div class="login-footer">
+      Ainda não tem acesso? <a href="https://wa.me/5521979509790" target="_blank">Fale com a gente</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRIMEIRO ACESSO — CONECTAR MERCADO LIVRE ===== -->
+<div id="page-conectar" class="page">
+  <div class="login-box" style="max-width:460px">
+    <div class="login-logo"><img src="logo.png" alt="RealEcom"></div>
+    <div style="text-align:center;margin-bottom:6px">
+      <span class="login-badge">ÚLTIMO PASSO</span>
+    </div>
+    <div class="login-title">Conecte sua conta do Mercado Livre</div>
+    <div class="login-sub" id="conectar-sub">Assim a Calculadora usa os dados reais da sua loja nas análises.</div>
+    <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:.76rem;line-height:1.5;color:var(--text2);margin:18px 0 16px;text-align:left">
+      <input type="checkbox" id="conectar-aceite" onchange="atualizarBotaoConectar()" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--o)">
+      <span>Autorizo a realecom a acessar e armazenar os dados de vendas, anúncios e reputação da minha conta do Mercado Livre para gerar as análises da Calculadora, conforme a <a href="privacidade.html" target="_blank" style="color:var(--o)">Política de Privacidade</a>. Posso revogar o acesso a qualquer momento nas configurações do Mercado Livre.</span>
+    </label>
+    <button class="btn-login" id="btn-conectar-ml" onclick="iniciarConexaoML()" disabled style="opacity:.5">Conectar Mercado Livre →</button>
+    <div class="login-erro" id="conectar-erro"></div>
+    <div class="login-loading" id="conectar-loading"><span>Conectando sua conta...</span></div>
+    <div style="text-align:center;margin-top:14px">
+      <button onclick="sair()" style="background:none;border:none;color:var(--text2);font-size:.76rem;cursor:pointer;text-decoration:underline">Sair</button>
+    </div>
+  </div>
+</div>
+
+<div id="page-home" class="page">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 40px">
+
+    <!-- Logo -->
+    <div style="margin-bottom:8px;text-align:center">
+      <img src="logo.png" class="logo-img" alt="RealEcom" style="height:72px;object-fit:contain">
+    </div>
+    <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:20px;text-align:center"></div>
+
+
+    <!-- Card destaque Sazonalidades -->
+    <div onclick="showPage('sazonal')" style="width:100%;max-width:780px;margin-bottom:14px;cursor:pointer;background:linear-gradient(135deg,#1e0a3c 0%,#2d1060 50%,#1a0a28 100%);border:1.5px solid #6B21A855;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px;transition:all .2s;user-select:none" onmouseover="this.style.borderColor='#F0A070'" onmouseout="this.style.borderColor='#6B21A855'">
+      <div style="width:48px;height:48px;background:linear-gradient(135deg,#6B21A8,#F0A070);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14"/><line x1="12" y1="14" x2="12.01" y2="14"/><line x1="16" y1="14" x2="16.01" y2="14"/></svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:.92rem;font-weight:800;color:#ddd8f0;margin-bottom:3px">📅 Planejamento de Sazonalidades</div>
+        <div style="font-size:.74rem;color:#a89ec8;line-height:1.5">Configure as datas do ano e receba lembretes automáticos para preparar seu estoque com antecedência — 45, 30 e 15 dias antes de cada data.</div>
+      </div>
+      <div style="font-size:.8rem;color:#F0A070;font-weight:700;flex-shrink:0">Configurar →</div>
+    </div>
+
+    <!-- Cards grandes: Calculadora + Dashboard -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:780px;margin-bottom:12px">
+      <div class="home-card" onclick="showPage('calc')" style="padding:22px 20px;border-color:var(--border);text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px #6B21A840"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg></div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">Calculadora</div>
+            <div style="font-size:.72rem;color:var(--text2)">Precificação completa</div>
+          </div>
+        </div>
+        <div style="font-size:.74rem;color:var(--text2);line-height:1.6;margin-bottom:10px">Calcule preço ideal, margem, ROI, Markup e compare com o mercado</div>
+        <div style="font-size:.7rem;color:#a78bfa;background:#6B21A815;border-radius:6px;padding:4px 10px;display:inline-block">→ Calcular novo produto</div>
+      </div>
+      <div class="home-card" onclick="showPage('dash')" style="padding:22px 20px;border-color:var(--border);text-align:left">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:44px;height:44px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px #F0A07040"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">Dashboard</div>
+            <div style="font-size:.72rem;color:var(--text2)" id="home-dash-sub">Seus produtos salvos</div>
+          </div>
+        </div>
+        <div style="font-size:.74rem;color:var(--text2);line-height:1.6;margin-bottom:10px">Gerencie, compare e acompanhe todos os produtos analisados</div>
+        <div style="font-size:.7rem;color:#F0A070;background:#F0A07015;border-radius:6px;padding:4px 10px;display:inline-block">→ Ver todos os produtos</div>
+      </div>
+    </div>
+
+    <!-- Cards médios: 8 ferramentas em 2 fileiras de 4 -->
+    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:900px">
+
+      <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #2563eb40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Calendário</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Coletas e vencimentos</div>
+      </div>
+      <div class="home-card" onclick="showPage('gestao')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #7c3aed40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Giro</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Gestão de estoque</div>
+      </div>
+      <div class="home-card" onclick="showPage('simples')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Simples</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Alíquota efetiva</div>
+      </div>
+      <div class="home-card" onclick="showPage('pub')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#db2777,#9d174d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #db277740"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Publicidade</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">ROAS e ACOS ideal</div>
+      </div>
+      <a href="https://busca.inpi.gov.br/pePI/jsp/marcas/Pesquisa_classe_basica.jsp" target="_blank" class="home-card" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #d9770640"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">INPI</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Marca registrada</div>
+      </a>
+      <div class="home-card" onclick="showPage('fin')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #16a34a40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Financeiro</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Entradas e saídas</div>
+      </div>
+      <div class="home-card" onclick="showPage('conc')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #0891b240"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Conciliação</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">ML + Mercado Pago</div>
+      </div>
+      <div class="home-card" onclick="showPage('prompt')" style="padding:20px 14px;text-align:center">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #7c3aed40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div style="font-size:.85rem;font-weight:800;color:var(--text);margin-bottom:4px">Prompt Fotos</div>
+        <div style="font-size:.7rem;color:var(--text2);line-height:1.4">Gerar prompts ML</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CALCULADORA ===== -->
+<div id="page-calc" class="page">
+  <div class="app-header">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">☀️ Claro</button>
+      <button class="btn-home" onclick="showPage('home')">🏠</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showPage('home')">
+      <img src="logo.png" class="logo-img" style="height:38px;object-fit:contain" alt="logo">
+      <div style="width:1px;height:26px;background:#444"></div>
+      <span style="font-size:.85rem;font-weight:900;letter-spacing:.08em;color:var(--o)">CALCULADORA REAL</span>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-dash" onclick="showPage('gestao')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Giro</button>
+      <button class="btn-dash" onclick="showPage('dash')"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Produtos</button>
+    </div>
+  </div>
+  <div class="main-layout">
+  <div class="left-panel" style="padding:12px 12px">
+
+    <!-- Toggle modo -->
+    <div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:8px;gap:4px">
+      <button id="mode-btn-1" onclick="setMode(1)" style="flex:1;padding:9px 6px;border:none;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff">Cálculo pela Margem Desejada</button>
+      <button id="mode-btn-2" onclick="setMode(2)" style="flex:1;padding:9px 6px;border:none;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer;background:none;color:var(--text3)">Cálculo pelo Valor Médio do Mercado</button>
+    </div>
+    <div id="mode-desc" style="background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 11px;margin-bottom:8px;font-size:.73rem;color:var(--text2);line-height:1.5">
+      <strong style="color:var(--o)">Modo Por Margem:</strong> Defina sua margem e descubra o preço mínimo ideal.
+    </div>
+
+    <!-- OPÇÃO C: coluna única, blocos agrupados, títulos destacados -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:8px">
+
+      <!-- BLOCO 1: Custo + Insumos + Frete Full -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#6B21A844">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>
+          CUSTO DOS PRODUTOS
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
+        </div>
+        <div class="item-list" id="items-list">
+          <div class="item-row">
+            <input type="number" class="item-input" placeholder="Custo item 1 (R$)" min="0" step="0.01">
+            <button class="remove-btn" onclick="removeItem(this)">×</button>
+          </div>
+        </div>
+        <button class="add-item" onclick="addItem()" style="margin-top:7px">+ Adicionar item</button>
+
+        <div style="height:1px;background:var(--border);margin:12px 0"></div>
+
+        <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>
+          INSUMOS / EMBALAGEM
+        </div>
+        <div class="field" style="margin-bottom:10px"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor (R$)</label><input type="number" id="insumos" placeholder="0" min="0" step="0.01"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--bg2);border-radius:8px;cursor:pointer;border:1px solid var(--border)" onclick="toggleFreteFullVisivel()">
+          <span style="font-size:.76rem;font-weight:700;color:var(--text2)">+ Incluir Frete de Coleta Full</span>
+          <div id="toggle-frete-full" style="width:34px;height:20px;background:var(--border);border-radius:20px;position:relative;transition:background .2s;flex-shrink:0">
+            <div id="toggle-frete-full-dot" style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></div>
+          </div>
+        </div>
+        <div id="frete-full-panel" style="display:none;margin-top:9px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor total do frete (R$)</label><input type="number" id="frete-full" placeholder="Ex: 200,00" min="0" step="0.01" oninput="calcFreteFullUnit()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Qtd. unidades no envio</label><input type="number" id="frete-full-qtd" placeholder="Ex: 200" min="1" step="1" oninput="calcFreteFullUnit()"></div>
+          </div>
+          <div id="frete-full-result" style="display:none;background:#7c3aed18;border:1px solid #7c3aed44;border-radius:7px;padding:6px 10px;font-size:.76rem;color:#a78bfa;text-align:center;margin-top:7px">
+            Custo/unidade: <strong id="frete-full-unit" style="color:#c4b5fd">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 2: Frete Entrega -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#7c3aed44">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
+          FRETE ENTREGA
+          <span style="font-size:.6rem;font-weight:700;background:#dc262620;color:#f87171;border:1px solid #dc262640;border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
+        </div>
+        <div class="toggle-row" style="margin-bottom:10px">
+          <button class="toggle-btn active" id="btn-manual" onclick="switchFrete('manual')" style="font-size:.74rem;padding:7px">Manual</button>
+          <button class="toggle-btn" id="btn-dim" onclick="switchFrete('dim')" style="font-size:.74rem;padding:7px">Por Dimensões</button>
+        </div>
+        <div id="tab-manual">
+          <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor do frete (R$)</label><input type="number" id="frete-manual" placeholder="Ex: 15.90" min="0" step="0.01"></div>
+        </div>
+        <div id="tab-dim" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Peso (kg)</label><input type="number" id="peso" placeholder="1.5" min="0" step="0.001" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Comp. (cm)</label><input type="number" id="comp" placeholder="30" min="0" step="0.1" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Larg. (cm)</label><input type="number" id="larg" placeholder="20" min="0" step="0.1" oninput="calcPeso()"></div>
+            <div class="field" style="margin-bottom:0"><label style="font-size:.72rem;font-weight:600;color:var(--text2)">Alt. (cm)</label><input type="number" id="alt" placeholder="15" min="0" step="0.1" oninput="calcPeso()"></div>
+          </div>
+          <div class="peso-info" id="peso-info" style="font-size:.7rem">
+            <span class="pi">Real: <strong id="pi-real">—</strong></span>
+            <span class="pi">Vol.: <strong id="pi-vol">—</strong></span>
+            <span class="pi">Usado: <strong id="pi-usado">—</strong></span>
+          </div>
+          <div id="frete-section" style="display:none;margin-top:8px">
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Reputação do vendedor</div>
+            <div style="display:flex;gap:5px;margin-bottom:8px">
+              <button onclick="freteReputacao='verde';this.parentElement.querySelectorAll('button').forEach(b=>b.style.background='');this.style.background='#16a34a33';this.style.borderColor='#16a34a';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid #16a34a;background:#16a34a33;color:#4ade80;font-size:.66rem;font-weight:700;cursor:pointer">🟢 Verde</button>
+              <button onclick="freteReputacao='amarela';this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='';b.style.borderColor='var(--border)'});this.style.background='#d9770622';this.style.borderColor='#d97706';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text3);font-size:.66rem;font-weight:700;cursor:pointer">🟡 Amarela</button>
+              <button onclick="freteReputacao='vermelha';this.parentElement.querySelectorAll('button').forEach(b=>{b.style.background='';b.style.borderColor='var(--border)'});this.style.background='#dc262622';this.style.borderColor='#dc2626';renderTable(freteSel_col??-1)" style="flex:1;padding:4px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text3);font-size:.66rem;font-weight:700;cursor:pointer">🔴 Vermelha</button>
+            </div>
+            <div style="font-size:.62rem;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700">Selecione a faixa de preço</div>
+            <div class="frete-wrap"><table class="ft" id="frete-table"></table></div>
+            <div class="frete-badge" id="frete-badge" style="font-size:.74rem">Frete: <span id="frete-val">—</span></div>
+            <div id="frete-aviso" style="display:none;border-radius:8px;padding:7px 10px;font-size:.72rem;line-height:1.5;margin-top:5px"></div>
+          </div>
+          <div class="note" style="font-size:.65rem;margin-top:5px">Peso vol. = C × L × A ÷ 6000. Usa-se o maior.</div>
+        </div>
+      </div>
+
+      <!-- BLOCO 3: Custos Percentuais -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#d9770644">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          CUSTOS PERCENTUAIS
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:5px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>Impostos (%)</label>
+            <input type="number" id="impostos" placeholder="0" min="0" max="100" step="0.1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;margin-bottom:5px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#0891b2,#0e7490);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/></svg></span>Comissão ML (%)</label>
+            <input type="number" id="comissao" placeholder="0" min="0" max="100" step="0.1">
+          </div>
+        </div>
+        <input type="hidden" id="afiliados" value="0">
+      </div>
+
+      <!-- BLOCO 4: Margem Desejada -->
+      <div class="margem-card" id="margem-block" style="margin-bottom:0;padding:14px 16px">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:#e9d5ff;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:rgba(255,255,255,.15);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></span>
+          MARGEM DESEJADA
+          <span style="font-size:.6rem;font-weight:700;background:rgba(220,38,38,.25);color:#fca5a5;border:1px solid rgba(220,38,38,.4);border-radius:20px;padding:1px 7px;margin-left:2px;font-family:'Figtree',sans-serif">obrigatório</span>
+        </div>
+        <div class="field" style="margin-bottom:6px"><input type="number" id="margem" placeholder="Ex: 15" min="0" max="100" step="0.1" style="font-size:1.4rem;font-weight:800;text-align:center;letter-spacing:-.02em"></div>
+        <div class="margem-hint" style="font-size:.72rem">↑ Meta de lucro em % sobre o preço de venda</div>
+      </div>
+
+      <!-- BLOCO 5: Preço Concorrência / Projeção -->
+      <div class="card" style="margin-bottom:0;padding:14px 16px;border-color:#16a34a44">
+        <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="width:22px;height:22px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          PREÇO CONCORRÊNCIA / PROJEÇÃO
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Qtd. unidades compradas</label>
+            <input type="number" id="quantidade" placeholder="100" min="1" step="1">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label id="ml-label" style="font-size:.72rem;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px"><span style="width:16px;height:16px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Preço Médio ML (R$) <span style="color:#f87171;font-size:.6rem">(obrigatório)</span></label>
+            <input type="number" id="preco-ml" placeholder="Obrigatório" min="0" step="0.01">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="btn-calc" onclick="calcular()" style="padding:12px;margin-bottom:6px"><span style="width:18px;height:18px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:5px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Calcular Precificação</button>
+    <button class="btn-reset" onclick="resetar()" style="width:100%;margin-top:0">← Novo Cálculo</button>
+
+  </div>
+  <div class="right-panel">
+    <div class="right-empty" id="right-empty">
+      <div style="font-size:3rem">🧮</div>
+      <p style="font-size:.82rem;color:#888;line-height:1.6">Preencha os dados ao lado<br>e clique em <strong style="color:var(--o)">Calcular</strong></p>
+    </div>
+    <div id="right-result" style="display:none">
+      <!-- Comparação: seu preço x preço do mercado -->
+      <div class="price-grid r-rv" id="price-grid">
+        <div class="price-card calc">
+          <div class="pc-tag">Preço Ideal Calculado</div>
+          <div class="pc-price" id="pc-preco">R$ —</div>
+          <div class="pc-badge">Preço mínimo seguro</div>
+          <div class="pc-duo">
+            <div>
+              <div class="pcl-lbl">Lucro por unidade</div>
+              <div class="pcl-val"><span class="mk" id="pc-lucro-un">R$ —</span></div>
+            </div>
+            <div>
+              <div class="pcl-lbl">Payout do ML</div>
+              <div class="pcl-val" id="pc-payout">R$ —</div>
+            </div>
+          </div>
+          <div class="pc-kpis">
+            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="pc-mk">—</div></div>
+            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="pc-roi">—</div></div>
+            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="pc-mg">—</div></div>
+          </div>
+        </div>
+
+        <div class="price-card ml-none" id="pc-ml-card">
+          <div class="pc-tag" id="pc-ml-tag">Preço Médio ML</div>
+          <div class="pc-price" id="pc-ml-preco">—</div>
+          <div class="pc-badge" id="pc-ml-badge">Informe o preço médio</div>
+          <div class="pc-duo">
+            <div>
+              <div class="pcl-lbl">Lucro por unidade</div>
+              <div class="pcl-val"><span class="mk" id="ml-lucro-un">R$ —</span></div>
+            </div>
+            <div>
+              <div class="pcl-lbl">Payout do ML</div>
+              <div class="pcl-val" id="ml-payout">R$ —</div>
+            </div>
+          </div>
+          <div class="pc-kpis" id="pc-ml-kpis" style="opacity:.25">
+            <div class="pc-kpi"><div class="pkl">Markup</div><div class="pkv" id="ml-mk">—</div></div>
+            <div class="pc-kpi"><div class="pkl">ROI</div><div class="pkv" id="ml-roi">—</div></div>
+            <div class="pc-kpi"><div class="pkl">Margem</div><div class="pkv" id="ml-mg">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preço de compra ideal -->
+      <div class="compra-box r-rv" id="compra-box" style="display:none">
+        <div class="compra-txt">
+          <div class="eb" id="compra-titulo">—
+            <span class="info">i<span class="tip" id="explain-text">Preencha o Preço Médio ML para ver a análise.</span></span>
+          </div>
+          <div class="compra-val"><span class="mk" id="compra-valor">R$ —</span></div>
+          <div class="compra-hoje" id="compra-hoje">—</div>
+        </div>
+        <div class="compra-eco">
+          <div class="eb" id="compra-eco-lbl">Economia no lote</div>
+          <div class="compra-eco-val" id="compra-economia">—</div>
+        </div>
+      </div>
+
+      <!-- Simulação de margens -->
+      <div class="sim-box r-rv" id="sim-box" style="display:none">
+        <div class="bd-title">Se você quisesse outra margem</div>
+        <div style="overflow-x:auto">
+          <table class="sim-tab">
+            <thead><tr>
+              <th>Margem</th><th>Preço de venda</th><th>Lucro/unid.</th><th>Payout ML</th><th>Comprar por até</th>
+            </tr></thead>
+            <tbody id="sim-corpo"></tbody>
+          </table>
+        </div>
+        <div class="sim-nota" id="sim-nota"></div>
+      </div>
+      <div class="breakdown" id="frete-alert-box" style="display:none"><div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Oportunidade de Frete</div><div id="frete-alert-content"></div></div>
+
+      <!-- Detalhamento + Projeção lado a lado -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div class="breakdown" style="margin-bottom:0">
+          <div class="bd-title">Detalhamento do Preço</div>
+          <div class="brow"><span class="bl">Custo dos produtos</span><span class="br out" id="bd-custo">—</span></div>
+          <div class="brow"><span class="bl">Frete entrega</span><span class="br out" id="bd-frete">—</span></div>
+          <div class="brow"><span class="bl">Insumos / Outros</span><span class="br out" id="bd-outros">—</span></div>
+          <div class="brow" id="bd-frete-full-row" style="display:none"><span class="bl" style="color:#a78bfa">Frete Full/unidade</span><span class="br" id="bd-frete-full">—</span></div>
+          <div class="brow"><span class="bl">Base de cálculo</span><span class="br" id="bd-base">—</span></div>
+          <div class="brow"><span class="bl">Impostos</span><span class="br out" id="bd-imp">—</span></div>
+          <div class="brow"><span class="bl">Comissão marketplace</span><span class="br out" id="bd-com">—</span></div>
+          <div class="brow"><span class="bl">Comissão afiliados</span><span class="br out" id="bd-afi">—</span></div>
+          <div class="brow"><span class="bl">Margem de lucro</span><span class="br" id="bd-mar">—</span></div>
+          <div class="brow total"><span class="bl">Preço de venda</span><span class="br" id="bd-preco">—</span></div>
+        </div>
+        <div class="breakdown" style="margin-bottom:0">
+          <div class="bd-title"><span style="width:18px;height:18px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Projeção — <span id="proj-qtd" style="color:var(--o)">—</span> unid.</div>
+          <!-- Cabeçalho 3 colunas -->
+          <div id="proj-header-ml" style="display:none;margin-bottom:2px">
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding-bottom:6px;border-bottom:1.5px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
+              <div style="color:var(--text3)">Item</div>
+              <div style="color:#c4b5fd;text-align:right">Preço Margem</div>
+              <div style="color:#F0A070;text-align:right">Preço Médio</div>
+            </div>
+          </div>
+          <!-- Linhas simples (sem ML) -->
+          <div id="proj-simple">
+            <div style="background:#2d106022;border:1px solid #6B21A844;border-radius:9px;padding:10px;text-align:center;margin-bottom:10px">
+              <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:4px">Payout ML por unidade</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#c4b5fd;letter-spacing:-.02em" id="proj-payout-destaque">—</div>
+              <div style="font-size:.64rem;color:#7c6af7;margin-top:2px">o que cai na sua conta após comissões</div>
+            </div>
+            <div class="brow"><span class="bl">Custo unitário</span><span class="br" id="proj-cu">—</span></div>
+            <div class="brow"><span class="bl">Investimento total</span><span class="br" id="proj-inv">—</span></div>
+            <div class="brow"><span class="bl">Total em impostos</span><span class="br" id="proj-imp">—</span></div>
+            <div class="brow"><span class="bl">Faturamento esperado</span><span class="br" id="proj-fat">—</span></div>
+            <div class="brow"><span class="bl">Lucro por unidade</span><span class="br" id="proj-pay">—</span></div>
+            <div class="brow total" style="border-top:1px solid var(--border);padding-top:8px"><span class="bl" style="color:#4ade80;font-weight:700">Lucro bruto</span><span class="br" id="proj-lb">—</span></div>
+            <div class="brow"><span class="bl">Caixa c/ imposto</span><span class="br" id="proj-cx-bruto">—</span></div>
+            <div class="brow total"><span class="bl">Caixa líquido</span><span class="br" id="proj-cx">—</span></div>
+          </div>
+          <!-- Linhas duplas (com ML) -->
+          <div id="proj-double" style="display:none">
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Custo unitário</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cu-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cu-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Investimento total</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-inv-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-inv-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Total em impostos</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-imp-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-imp-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Faturamento esperado</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-fat-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-fat-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Lucro por unidade</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-pay-a">—</span><span style="text-align:right;font-weight:600" id="pd-pay-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa c/ imposto</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-bruto-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-bruto-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:.78rem"><span style="color:var(--text3)">Caixa líquido</span><span style="text-align:right;color:#c4b5fd;font-weight:600" id="pd-cx-a">—</span><span style="text-align:right;color:#F0A070;font-weight:600" id="pd-cx-b">—</span></div>
+            <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:4px;padding:8px 0 2px;border-top:1.5px solid var(--border);margin-top:2px;font-size:.82rem">
+              <span style="color:#4ade80;font-weight:700">Lucro bruto</span>
+              <span style="text-align:right" id="pd-lb-a">—</span>
+              <span style="text-align:right" id="pd-lb-b">—</span>
+            </div>
+            <!-- Payout destacado por cenário -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+              <div style="background:#2d106022;border:1px solid #6B21A844;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:4px">Payout ML · Preço Margem</div>
+                <div style="font-size:1.1rem;font-weight:800;color:#c4b5fd;letter-spacing:-.02em" id="pd-payout-destaque-a">—</div>
+                <div style="font-size:.64rem;color:#7c6af7;margin-top:2px">o que cai na sua conta</div>
+              </div>
+              <div style="background:#16a34a11;border:1px solid #16a34a44;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F0A070;margin-bottom:4px">Payout ML · Preço Médio</div>
+                <div style="font-size:1.1rem;font-weight:800;letter-spacing:-.02em" id="pd-payout-destaque-b">—</div>
+                <div style="font-size:.64rem;color:var(--text3);margin-top:2px">o que cai na sua conta</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frete Reverso + Ranqueamento + Salvar -->
+      <div id="bottom-wrapper" style="display:none;flex-direction:column;gap:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <!-- Frete Reverso -->
+          <div class="breakdown" id="devolucao-box" style="margin-bottom:0">
+            <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#f87171,#dc2626);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></span>Frete Reverso</div>
+            <div class="field" style="margin-bottom:10px">
+              <label>Taxa de devolução (R$)</label>
+              <input type="number" id="dev-taxa" placeholder="Ex: 20,00" min="0" step="0.01" oninput="calcDevolucao()" style="background:var(--card)">
+            </div>
+            <div style="background:#7f1d1d22;border:1px solid #dc262633;border-radius:8px;padding:10px;text-align:center;margin-bottom:8px">
+              <div style="font-size:.68rem;color:var(--text2);margin-bottom:2px">Vendas para cobrir</div>
+              <div style="font-size:1.6rem;font-weight:900;color:#f87171" id="dev-vendas">—</div>
+            </div>
+            <div style="font-size:.74rem;color:var(--text2);background:#7f1d1d18;border-radius:8px;padding:8px 10px;line-height:1.5" id="dev-msg">Informe o valor da taxa para calcular.</div>
+          </div>
+
+          <!-- Ranqueamento -->
+          <div class="breakdown" style="margin-bottom:0">
+            <div class="bd-title" style="color:#60a5fa"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>Ranqueamento</div>
+            <div class="field" style="margin-bottom:8px">
+              <label>Preço para ranquear (R$)</label>
+              <input type="number" id="rank-preco" placeholder="Ex: 49,90" min="0" step="0.01" oninput="calcRanqueamento()" style="background:var(--card)">
+            </div>
+            <div class="field" style="margin-bottom:10px">
+              <label>Qtd. vendas no ranqueamento</label>
+              <input type="number" id="rank-qtd" placeholder="Ex: 30" min="0" step="1" oninput="calcRanqueamento()" style="background:var(--card)">
+            </div>
+            <div id="rank-resultado" style="display:none">
+              <div class="brow"><span class="bl">Lucro/unid.</span><span class="br" id="rank-pay-unit">—</span></div>
+              <div class="brow"><span class="bl">Faturamento total</span><span class="br" id="rank-fat">—</span></div>
+              <div class="brow total"><span class="bl" style="color:#4ade80">Lucro / Prejuízo</span><span class="br" id="rank-lucro">—</span></div>
+              <div style="margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px">
+                <div style="font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px" id="rank-impacto-label">Impacto vs preço ideal</div>
+                <div style="font-size:1rem;font-weight:900" id="rank-impacto">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Salvar -->
+          <div class="save-card" id="save-card" style="margin-bottom:0">
+            <div class="save-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>Salvar no Dashboard</div>
+            <div class="field"><label>Nome do produto</label><input type="text" id="save-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
+            <div class="row2">
+              <div class="field"><label>Fornecedor</label><input type="text" id="save-forn" placeholder="Nome do fornecedor"></div>
+              <div class="field"><label>Código do produto</label><input type="text" id="save-cod" placeholder="Ex: SKU-001"></div>
+            </div>
+            <div style="margin-bottom:9px">
+              <button type="button" onclick="const b=document.getElementById('links-anuncio');const open=b.style.display==='flex';b.style.display=open?'none':'flex';this.textContent=open?'🔗 Links de anúncio ▾':'🔗 Links de anúncio ▴'" style="background:none;border:1px dashed var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:.72rem;color:var(--text2);width:100%;text-align:left">🔗 Links de anúncio ▾</button>
+              <div id="links-anuncio" style="display:none;margin-top:7px;flex-direction:column;gap:6px">
+                <input type="url" id="save-link1" placeholder="Link anúncio 1 — https://mercadolivre.com.br/..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text);background:var(--input-bg);outline:none">
+                <input type="url" id="save-link2" placeholder="Link anúncio 2 — https://mercadolivre.com.br/..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text);background:var(--input-bg);outline:none">
+                <input type="url" id="save-link3" placeholder="Link anúncio 3 — https://mercadolivre.com.br/..." style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;color:var(--text);background:var(--input-bg);outline:none">
+              </div>
+            </div>
+            <div class="field"><label><span style="width:18px;height:18px;background:linear-gradient(135deg,#7a6f9a,#5a4f7a);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>Observações</label><textarea id="save-obs" placeholder="Anotações..." style="height:52px;resize:none"></textarea></div>
+            <button class="btn-save" id="btn-salvar-prod" onclick="salvarProduto()"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span>Salvar no Dashboard</button>
+            <button class="btn-save" id="btn-atualizar" onclick="atualizarProduto()" style="display:none;background:linear-gradient(135deg,#166534,#16a34a);margin-top:6px"><span style="width:20px;height:20px;background:rgba(255,255,255,.2);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></span>Atualizar produto</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="page-dash" class="page">
+  <div class="dash-page">
+    <div class="pg-head" style="--pg:var(--in)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Produtos</div>
+          <div class="pg-stats">
+            <div><div class="pg-sl">Salvos</div><div class="pg-sv" id="dash-st-total">—</div></div>
+            <div><div class="pg-sl">Comprados</div><div class="pg-sv" id="dash-st-comp" style="color:var(--in)">—</div></div>
+            <div><div class="pg-sl">Margem média</div><div class="pg-sv" id="dash-st-mg">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+          <button onclick="exportarExcel()" class="pg-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="dash-content"></div>
+  </div>
+</div>
+
+
+<!-- ===== CENTRAL DE AULAS ===== -->
+
+<!-- ===== CALENDÁRIO ===== -->
+<div id="page-cal" class="page">
+  <div class="cal-page">
+
+    <!-- Cabeçalho -->
+    <div class="pg-head" style="--pg:#2563eb">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title" id="cal-titulo">—</div>
+          <div class="pg-stats">
+            <div><div class="pg-sl">Eventos no mês</div><div class="pg-sv" id="cal-st-mes">—</div></div>
+            <div><div class="pg-sl">Próximos 7 dias</div><div class="pg-sv" id="cal-st-prox" style="color:#2563eb">—</div></div>
+            <div><div class="pg-sl">Hoje</div><div class="pg-sv" id="cal-st-hoje">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts" style="position:relative">
+          <button onclick="navMes(-1)" class="cal-nav-btn" title="Mês anterior">‹</button>
+          <button onclick="navMes(1)" class="cal-nav-btn" title="Próximo mês">›</button>
+          <button onclick="toggleMenuEvento(event)" class="pg-btn" id="btn-novo-ev">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Evento
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" style="margin-left:1px;opacity:.7"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <!-- atalhos que antes ficavam soltos na página -->
+          <div id="menu-evento" style="display:none;position:absolute;right:0;top:38px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px;width:196px;box-shadow:0 12px 34px rgba(0,0,0,.34);z-index:60">
+            <button onclick="fecharMenuEvento();abrirModalTemplate('das')" class="mev"><span class="mev-ic" style="background:linear-gradient(135deg,#dc2626,#991b1b)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>Pagar DAS</button>
+            <button onclick="fecharMenuEvento();abrirModalTemplate('full')" class="mev"><span class="mev-ic" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>Coleta Full</button>
+            <button onclick="fecharMenuEvento();abrirModalTemplate('cartao')" class="mev"><span class="mev-ic" style="background:linear-gradient(135deg,#16a34a,#15803d)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Pagar cartão</button>
+            <button onclick="fecharMenuEvento();abrirModalTemplate('estoque')" class="mev"><span class="mev-ic" style="background:linear-gradient(135deg,#F0A070,#ea580c)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></span>Ver estoque</button>
+            <button onclick="fecharMenuEvento();abrirModalTemplate('fornecedor')" class="mev"><span class="mev-ic" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg></span>Fornecedor</button>
+            <div style="height:1px;background:var(--border);margin:4px 6px"></div>
+            <button onclick="fecharMenuEvento();abrirModal(null)" class="mev"><span class="mev-ic" style="background:var(--bg2);border:1px solid var(--border)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>Outro evento…</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuração — chips discretos -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <button onclick="showPage('sazonal')" class="cfg-chip"><span class="cfg-dot" style="background:#7c3aed"></span>Sazonalidades</button>
+    </div>
+
+    
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</div>
+
+<!-- SheetJS — leitura dos .xlsx da conciliação -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+<script src="app.js?v=1792603220"></script>
+<script>
+function toggleSenha(){
+  const input=document.getElementById('login-senha');
+  const btn=document.getElementById('btn-ver-senha');
+  if(input.type==='password'){input.type='text';btn.textContent='🙈';}
+  else{input.type='password';btn.textContent='👁';}
+}
+</script>
+<script>
+function exportarExcel(){
+  var prods=JSON.parse(localStorage.getItem('realecom_prods')||'[]');
+  if(!prods.length){alert('Nenhum produto no Dashboard para exportar.');return;}
+  var f=function(v){return typeof v==='number'?v.toFixed(2).replace('.',','):v||'';};
+  var rows=[['Nome','Fornecedor','Codigo','Custo Real','Custo Ideal','Preco Calculado','Preco ML','Lucro/unid','Markup','ROI %','Margem %','Obs']];
+  prods.forEach(function(p){rows.push([p.nome||'',p.forn||'',p.cod||'',f(p.custoReal),p.custoIdeal!==null?f(Math.max(p.custoIdeal,0)):'',f(p.precoCalc),p.precoML>0?f(p.precoML):'',f(p.payout),p.markup?p.markup.toFixed(2).replace('.',','):'',f(p.roi),f(p.margem),p.obs||'']);});
+  var csv=rows.map(function(r){return r.map(function(c){return'"'+String(c).replace(/"/g,'""')+'"';}).join(';');}).join('\r\n');
+  var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='dashboard_realecom.csv';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+</script>
+<!-- ===== CALCULADORA DE GIRO ===== -->
+<div id="page-gestao" class="page">
+  <div class="gest-page">
+
+    <div class="pg-head" style="--pg:#7c3aed">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Giro de estoque</div>
+          <div class="pg-sub">Quanto comprar e quando fazer o próximo pedido</div>
+          <div class="pg-stats" id="giro-head-stats" style="display:none">
+            <div><div class="pg-sl">Estoque hoje</div><div class="pg-sv" id="hd-estoque">—</div></div>
+            <div><div class="pg-sl">Dura até</div><div class="pg-sv" id="hd-dias">—</div></div>
+            <div><div class="pg-sl">Custo/unid.</div><div class="pg-sv" id="hd-custo">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="gest-card" style="margin-bottom:14px">
+      <div class="gest-card-title" style="color:var(--o)"><span style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>DADOS DO PRODUTO</div>
+      <div class="row2" style="margin-bottom:9px">
+        <div class="field">
+          <label>Quantidade comprada (unid.)</label>
+          <input type="number" class="gest-input" id="giro-qtd" placeholder="Ex: 500" min="0" step="1" oninput="calcularGiro()">
+        </div>
+        <div class="field">
+          <label>Valor total do lote (R$)</label>
+          <input type="text" class="gest-input" id="giro-valor" placeholder="R$ 0,00" oninput="maskReal(this);calcularGiro()" style="font-weight:700">
+        </div>
+      </div>
+      <div class="row2" style="margin-bottom:9px">
+        <div class="field">
+          <label>Vendas por dia (unid.)</label>
+          <input type="number" class="gest-input" id="giro-vendas-dia" placeholder="Ex: 25" min="0" step="1" oninput="calcularGiro()">
+        </div>
+        <div class="field">
+          <label>Data da compra</label>
+          <input type="date" class="gest-input" id="giro-data-compra" oninput="calcularGiro()">
+          <div class="note">Quando você fez essa compra?</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:9px">
+        <label>Data de início das vendas</label>
+        <input type="date" class="gest-input" id="giro-data-inicio" oninput="calcularGiro()">
+        <div class="note">Quando o produto ficou disponível para venda? O estoque é calculado a partir desta data.</div>
+      </div>
+      <div class="field">
+        <label>Dias para chegar o novo lote</label>
+        <input type="number" class="gest-input" id="giro-prazo" placeholder="Ex: 15" min="0" step="1" oninput="calcularGiro()">
+        <div class="note">Quantos dias o fornecedor demora para entregar depois que você faz o pedido?</div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div id="giro-resultado" style="display:none">
+
+      <!-- Situação atual -->
+      <div class="gest-card" style="margin-bottom:14px">
+        <div class="gest-card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>SITUAÇÃO ATUAL DO ESTOQUE</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Estoque atual</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="giro-estoque-atual">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">unidades</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Dias restantes</div>
+            <div style="font-size:1.5rem;font-weight:700;letter-spacing:-.02em" id="giro-dias-restantes">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">no ritmo atual</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Custo/unidade</div>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="giro-custo-unit">—</div>
+            <div style="font-size:.65rem;color:var(--text3)">médio</div>
+          </div>
+        </div>
+        <div id="giro-alerta" style="border-radius:10px;padding:10px 13px;font-size:.78rem;font-weight:600;line-height:1.5;text-align:center"></div>
+      </div>
+
+      <!-- Quanto comprar -->
+      <div class="gest-card-title" style="color:var(--text3);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px">QUANTO COMPRAR NO PRÓXIMO PEDIDO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="gest-kpi">
+          <div class="gk-label" style="color:var(--text3)">5 dias</div>
+          <div class="gk-val" id="giro-c5-qtd" style="font-size:1.05rem;font-weight:700">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--text3);margin-top:5px" id="giro-c5-val">R$ —</div>
+        </div>
+        <div class="gest-kpi">
+          <div class="gk-label" style="color:var(--text3)">10 dias</div>
+          <div class="gk-val" id="giro-c10-qtd" style="font-size:1.05rem;font-weight:700">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--text3);margin-top:5px" id="giro-c10-val">R$ —</div>
+        </div>
+        <div class="gest-kpi" style="border-color:var(--mark);background:var(--mark-soft)">
+          <div class="gk-label" style="color:var(--text3)">15 dias ⭐</div>
+          <div class="gk-val" id="giro-c15-qtd" style="font-size:1.05rem;font-weight:700;color:var(--text)">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--text2);margin-top:5px" id="giro-c15-val">R$ —</div>
+        </div>
+        <div class="gest-kpi">
+          <div class="gk-label" style="color:#F0A070">30 dias</div>
+          <div class="gk-val" id="giro-c30-qtd" style="font-size:1.05rem;font-weight:700">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:3px">unidades</div>
+          <div style="font-size:.8rem;font-weight:600;color:var(--text3);margin-top:5px" id="giro-c30-val">R$ —</div>
+        </div>
+      </div>
+
+      <!-- Ponto de reposição -->
+      <div class="gest-card" style="background:linear-gradient(135deg,#1e0a3c,#2d1060);border-color:#6B21A855;margin-bottom:14px">
+        <div class="gest-card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>PONTO DE REPOSIÇÃO</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
+            <div style="font-size:.66rem;color:var(--text4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Faça o pedido quando tiver</div>
+            <div style="font-size:1.6rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="giro-ponto-rep">—</div>
+            <div style="font-size:.7rem;color:#a78bfa">unidades em estoque</div>
+          </div>
+          <div style="text-align:center;background:#6B21A815;border-radius:10px;padding:12px">
+            <div style="font-size:.66rem;color:var(--text4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Data para pedir</div>
+            <div style="font-size:1.2rem;font-weight:700;letter-spacing:-.02em" id="giro-ponto-data"><span class="mk-giro">—</span></div>
+            <div style="font-size:.7rem;color:var(--text4);margin-top:3px" id="giro-ponto-label">baseado na entrega</div>
+          </div>
+        </div>
+        <div style="font-size:.76rem;color:var(--text3);margin-bottom:10px;padding:9px 12px;background:var(--bg2);border-radius:8px;line-height:1.6" id="giro-ponto-msg"></div>
+        <!-- Botão adicionar ao calendário -->
+        <button id="btn-add-cal" onclick="adicionarGiroCalendario()" style="display:none;width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit">
+          Adicionar lembrete no Calendário
+        </button>
+      </div>
+
+    </div>
+
+    <div id="giro-empty" style="text-align:center;padding:40px 20px;opacity:.3">
+      <div style="font-size:2.5rem">📦</div>
+      <p style="font-size:.8rem;color:#888;margin-top:8px;line-height:1.6">Preencha os dados acima<br>para ver os cálculos</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== METAS ===== -->
+
+<!-- ===== SIMPLES NACIONAL ===== -->
+<div id="page-simples" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:20px 18px">
+
+    <div class="pg-head" style="--pg:#0891b2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Simples Nacional</div>
+          <div class="pg-sub">Alíquota efetiva e quanto você paga de DAS</div>
+          <div class="pg-stats" id="sn-head-stats" style="display:none">
+            <div><div class="pg-sl">Faixa</div><div class="pg-sv" id="hd-sn-faixa">—</div></div>
+            <div><div class="pg-sl">Alíquota efetiva</div><div class="pg-sv" id="hd-sn-aliq" style="color:#0891b2">—</div></div>
+            <div><div class="pg-sl">DAS do mês</div><div class="pg-sv" id="hd-sn-das">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>DADOS DE FATURAMENTO</div>
+      <div class="row2">
+        <div class="field">
+          <label>Faturamento bruto — últimos 12 meses (R$)</label>
+          <input type="text" id="sn-rbt12" placeholder="R$ 0,00" oninput="maskReal(this);calcularSimples()" style="font-size:1rem;font-weight:700">
+          <div class="note">Some os últimos 12 meses de faturamento</div>
+        </div>
+        <div class="field">
+          <label>Faturamento do mês atual (R$)</label>
+          <input type="text" id="sn-mensal" placeholder="R$ 0,00" oninput="maskReal(this);calcularSimples()" style="font-size:1rem;font-weight:700">
+          <div class="note">Faturamento bruto deste mês</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div id="sn-resultado" style="display:none">
+
+      <!-- Faixa + alíquotas em destaque -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--card);border:1.5px solid var(--p2);border-radius:14px;padding:14px;text-align:center">
+          <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--p2);margin-bottom:6px">Faixa</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="sn-faixa">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px" id="sn-faixa-range">—</div>
+        </div>
+        <div style="background:var(--card);border:1.5px solid #16a34a55;border-radius:14px;padding:14px;text-align:center">
+          <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4ade80;margin-bottom:6px">Alíquota Efetiva</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="sn-aliq-efetiva">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">sobre o faturamento</div>
+        </div>
+        <div style="background:var(--card);border:1.5px solid #ef444455;border-radius:14px;padding:14px;text-align:center">
+          <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#f87171;margin-bottom:6px">DAS a Pagar</div>
+          <div style="font-size:1.5rem;font-weight:700;letter-spacing:-.02em" id="sn-das"><span class="mk-sn">—</span></div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">este mês</div>
+        </div>
+      </div>
+
+      <!-- Detalhamento do cálculo -->
+      <div class="breakdown" style="margin-bottom:14px">
+        <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>COMO FOI CALCULADO</div>
+        <div class="brow"><span class="bl">RBT12 (faturamento 12 meses)</span><span class="br" id="sn-d-rbt12">—</span></div>
+        <div class="brow"><span class="bl">Alíquota nominal da faixa</span><span class="br" id="sn-d-nominal">—</span></div>
+        <div class="brow"><span class="bl">Parcela a deduzir</span><span class="br" id="sn-d-deducao">—</span></div>
+        <div class="brow highlight"><span class="bl">Alíquota efetiva = (RBT12 × nominal − dedução) / RBT12</span><span class="br" id="sn-d-efetiva">—</span></div>
+        <div class="brow"><span class="bl">Faturamento mensal</span><span class="br" id="sn-d-mensal">—</span></div>
+        <div class="brow total"><span class="bl">DAS = faturamento mensal × alíquota efetiva</span><span class="br" id="sn-d-das">—</span></div>
+      </div>
+
+      <!-- Repartição dos tributos -->
+      <div class="breakdown" style="margin-bottom:14px">
+        <div class="bd-title"><span style="width:20px;height:20px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;margin-right:6px;flex-shrink:0"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></span>REPARTIÇÃO DOS TRIBUTOS</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="sn-tributos"></div>
+      </div>
+
+    </div>
+
+    <!-- Empty state -->
+    <div id="sn-empty" style="text-align:center;padding:40px 20px;opacity:.3">
+      <div style="font-size:2.5rem">🧾</div>
+      <p style="font-size:.8rem;color:#888;margin-top:8px;line-height:1.6">Preencha o faturamento acima<br>para ver os cálculos</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAZONALIDADE ===== -->
+<div id="page-sazonal" class="page">
+  <div style="padding:24px 28px;max-width:780px;margin:0 auto">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <button class="btn-back" onclick="showPage('cal')">← Voltar</button>
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:2px">Datas Sazonais</h2>
+        <p style="font-size:.74rem;color:var(--text2);line-height:1.6">Selecione as datas relevantes para o seu negócio. Criaremos lembretes automáticos <strong style="color:var(--o)">45, 30 e 15 dias antes</strong> de cada data selecionada, mais um lembrete no próprio dia.</p>
+      </div>
+    </div>
+
+    <!-- Selecionar todos / nenhum -->
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button onclick="selecionarTodasSazonais(true)" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 14px;font-size:.74rem;font-weight:600;cursor:pointer">Selecionar todas</button>
+      <button onclick="selecionarTodasSazonais(false)" style="background:var(--card);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:6px 14px;font-size:.74rem;font-weight:600;cursor:pointer">Desmarcar todas</button>
+      <span style="margin-left:auto;font-size:.74rem;color:var(--text3);align-self:center" id="sazonal-count">0 selecionadas</span>
+    </div>
+
+    <div id="sazonal-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"></div>
+
+    <button onclick="salvarSazonalidade()" style="width:100%;padding:13px;background:linear-gradient(135deg,#6B21A8,#F0A070);color:#fff;border:none;border-radius:12px;font-size:.92rem;font-weight:800;cursor:pointer">
+      Salvar e atualizar lembretes no calendário
+    </button>
+    <p style="text-align:center;font-size:.7rem;color:var(--text3);margin-top:8px">Os lembretes sazonais futuros existentes serão substituídos pelos novos.</p>
+  </div>
+</div>
+<div id="page-pub" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:20px 18px">
+
+    <div class="pg-head" style="--pg:#db2777">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Publicidade</div>
+          <div class="pg-sub">ROAS e ACOS ideais para não comer sua margem</div>
+          <div class="pg-stats" id="pub-head-stats" style="display:none">
+            <div><div class="pg-sl">ROAS mínimo</div><div class="pg-sv" id="hd-pub-roas">—</div></div>
+            <div><div class="pg-sl">ACOS máximo</div><div class="pg-sv" id="hd-pub-acos" style="color:#db2777">—</div></div>
+            <div><div class="pg-sl">Verba por venda</div><div class="pg-sv" id="hd-pub-verba">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+<div style="display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:20px;gap:4px">
+      <button id="pub-btn-dash" onclick="switchPubMode('dash')" class="toggle-btn active" style="display:flex;align-items:center;gap:7px;justify-content:center;padding:8px;font-size:.78rem">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard Produtos
+      </button>
+      <button id="pub-btn-manual" onclick="switchPubMode('manual')" class="toggle-btn" style="display:flex;align-items:center;gap:7px;justify-content:center;padding:8px;font-size:.78rem">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Novo Produto
+      </button>
+    </div>
+
+    <!-- MODO DASHBOARD -->
+    <div id="pub-sec-dash">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          SELECIONE O PRODUTO
+        </div>
+        <select id="pub-produto-sel" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--bg2);outline:none;font-family:inherit;margin-bottom:12px"><option value="">Carregando produtos...</option></select>
+        <div id="pub-preview" style="display:none;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Custo</div><div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-custo">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Preço calculado</div><div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-preco">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Margem</div><div style="font-size:.88rem;font-weight:700;color:var(--in)" id="pub-pre-margem">—</div></div>
+          <div style="background:var(--bg2);border-radius:9px;padding:9px 12px"><div style="font-size:.62rem;color:var(--text3);margin-bottom:3px">Lucro/unid.</div><div style="font-size:.88rem;font-weight:700;color:var(--text)" id="pub-pre-payout">—</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          QUANTO QUER LUCRAR MESMO ANUNCIANDO? (%)
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <input type="number" id="pub-lucro-dash" placeholder="Ex: 10" min="0" max="100" step="0.1" oninput="(function(){const idx=document.getElementById('pub-produto-sel').value;if(idx==='')return;const prods=getCached('realecom_prods','[]');calcularPublicidadeDash(prods[parseInt(idx)]);})()">
+          <div class="note">% de margem que quer garantir após pagar os anúncios</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODO MANUAL -->
+    <div id="pub-sec-manual" style="display:none">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          DADOS DO PRODUTO
+        </div>
+        <div class="field" style="margin-bottom:9px"><label>Nome do produto</label><input type="text" id="pub-m-nome" placeholder="Ex: Camiseta Dry Fit P"></div>
+        <div class="row2" style="margin-bottom:9px">
+          <div class="field"><label>Preço de venda (R$)</label><input type="number" id="pub-m-preco" placeholder="Ex: 66,47" min="0" step="0.01" oninput="calcularPublicidadeManual()"></div>
+          <div class="field"><label>Custo do produto (R$)</label><input type="number" id="pub-m-custo" placeholder="Ex: 35,00" min="0" step="0.01" oninput="calcularPublicidadeManual()"></div>
+        </div>
+        <div class="row2" style="margin-bottom:9px">
+          <div class="field"><label>Taxa / Frete (R$)</label><input type="number" id="pub-m-taxa" placeholder="Ex: 8,00" min="0" step="0.01" oninput="calcularPublicidadeManual()"><div class="note">Some frete + embalagem + insumos</div></div>
+          <div class="field"><label>Comissão marketplace (%)</label><input type="number" id="pub-m-comissao" placeholder="Ex: 11,5" min="0" step="0.1" oninput="calcularPublicidadeManual()"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Impostos (%)</label><input type="number" id="pub-m-imposto" placeholder="Ex: 7" min="0" step="0.1" oninput="calcularPublicidadeManual()"></div>
+          <div class="field"><label>Lucro desejado (%)</label><input type="number" id="pub-m-lucro" placeholder="Ex: 10" min="0" step="0.1" oninput="calcularPublicidadeManual()"><div class="note">% de margem após os anúncios</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADO -->
+    <div id="pub-resultado" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">ROAS mínimo</span></div>
+          <div style="font-size:1.9rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="pub-roas">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">retorno por R$ investido</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">ACOS máximo</span></div>
+          <div style="font-size:1.9rem;font-weight:700;color:var(--text);letter-spacing:-.02em" id="pub-acos">—</div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">do faturamento em ads</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center">
+          <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px"><div style="width:22px;height:22px;background:linear-gradient(135deg,#F0A070,#ea580c);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div><span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)">Margem p/ ads</span></div>
+          <div style="font-size:1.9rem;font-weight:700;letter-spacing:-.02em"><span class="mk-pub" id="pub-margem-ads">—</span></div>
+          <div style="font-size:.68rem;color:var(--text3);margin-top:4px">por venda realizada</div>
+        </div>
+      </div>
+      <div class="breakdown" style="margin-bottom:14px">
+        <div class="bd-title">O que isso significa na prática?</div>
+        <div class="brow"><span class="bl">Para cada R$ 1,00 em ads, você precisa vender</span><span class="br" id="pub-exp-roas" style="color:#c4b5fd">—</span></div>
+        <div class="brow"><span class="bl">Seu custo de anúncio não pode passar de</span><span class="br" id="pub-exp-acos" style="color:#4ade80">—</span></div>
+        <div class="brow total"><span class="bl">Margem disponível por venda para investir em ads</span><span class="br" id="pub-exp-margem" style="color:var(--o)">—</span></div>
+      </div>
+      <div class="save-card" style="margin-bottom:14px">
+        <div class="save-title">Salvar esta análise</div>
+        <div id="pub-save-nome-wrap" style="display:none;margin-bottom:8px"><div class="field" style="margin-bottom:0"><label>Nome do produto</label><input type="text" id="pub-save-nome" placeholder="Ex: Camiseta Dry Fit P"></div></div>
+        <button onclick="salvarAnalisePublicidade()" class="btn-save">Salvar análise</button>
+      </div>
+    </div>
+
+    <!-- Glossário -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleGlossario()">
+        <div class="card-title" style="margin-bottom:0;display:flex;align-items:center;gap:6px">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          O QUE É ROAS, ACOS E TACOS?
+        </div>
+        <span id="glossario-arrow" style="color:var(--text3);font-size:.8rem">▼</span>
+      </div>
+      <div id="glossario-body" style="display:none;margin-top:14px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="border-left:3px solid #c4b5fd;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#6B21A822;color:#c4b5fd;border:1px solid #6B21A844;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">ROAS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Retorno sobre o gasto em anúncio</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Indica quantos reais você fatura para cada R$ 1,00 gasto em ads. Gastou R$ 100 e vendeu R$ 500? Seu ROAS é <strong style="color:#c4b5fd">5x</strong>. Quanto maior, melhor.</p>
+          </div>
+          <div style="border-left:3px solid #4ade80;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#16a34a22;color:#4ade80;border:1px solid #16a34a44;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">ACOS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Custo do anúncio sobre as vendas</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Mostra quanto % do faturamento foi para pagar os anúncios. Gastou R$ 100 e vendeu R$ 500? ACOS de <strong style="color:#4ade80">20%</strong>. Quanto menor, melhor. É o inverso do ROAS.</p>
+          </div>
+          <div style="border-left:3px solid #F0A070;padding-left:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="background:#F0A07022;color:#F0A070;border:1px solid #F0A07044;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700">TACOS</span><span style="font-size:.82rem;font-weight:700;color:var(--text)">Custo total do anúncio sobre todas as vendas</span></div>
+            <p style="font-size:.76rem;color:var(--text2);line-height:1.6">Igual ao ACOS, mas divide o gasto com ads pelo total de vendas — incluindo as orgânicas. Mostra o impacto real dos ads no negócio inteiro, não só nas vendas pagas.</p>
+          </div>
+          <div style="background:#1e1a2e;border-radius:9px;padding:10px 13px;font-size:.74rem;color:#a78bfa">💡 <strong>Dica:</strong> ROAS e ACOS são inversos — ROAS = 100 ÷ ACOS. ACOS máximo de 5% = ROAS mínimo de 20x.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Histórico -->
+    <div id="pub-historico-wrap" style="display:none">
+      <div class="card-title" style="margin-bottom:10px;display:flex;align-items:center;gap:6px">
+        <div style="width:20px;height:20px;background:linear-gradient(135deg,#d97706,#b45309);border-radius:5px;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 1 .5 4"/><polyline points="3 16 3 11 8 11"/></svg></div>
+        ANÁLISES SALVAS
+      </div>
+      <div id="pub-historico"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== NCM ===== -->
+
+<script>
+// Cache bust v1783018259 — força browser a usar versão nova
+(function(){
+  // Limpa caches antigos do browser
+  if('caches' in window){
+    caches.keys().then(function(names){
+      names.forEach(function(name){
+        if(!name.includes('firebase') && !name.includes('firestore')){
+          caches.delete(name);
+        }
+      });
+    });
+  }
+  // Força atualização de service workers registrados
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(reg){
+        if(reg.scope && !reg.scope.includes('firebase-messaging')){
+          reg.update();
+        }
+      });
+    });
+  }
+})();
+</script>
+<!-- ===== FINANCEIRO ===== -->
+<div id="page-fin" class="page">
+  <div style="max-width:900px;margin:0 auto;padding:20px 18px">
+
+    <div class="pg-head" style="--pg:#16a34a">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title" id="fin-mes-label">—</div>
+          <div class="pg-stats">
+            <div><div class="pg-sl">Entradas</div><div class="pg-sv" id="hd-fin-ent" style="color:var(--in)">—</div></div>
+            <div><div class="pg-sl">Saídas</div><div class="pg-sv" id="hd-fin-sai" style="color:var(--out)">—</div></div>
+            <div><div class="pg-sl">Resultado</div><div class="pg-sv" id="hd-fin-res">—</div></div>
+          </div>
+        </div>
+        <div class="pg-acts">
+          <button onclick="finMudarMes(-1)" class="cal-nav-btn" title="Mês anterior">‹</button>
+          <button onclick="finMudarMes(1)" class="cal-nav-btn" title="Próximo mês">›</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado do mês -->
+    <div class="card" style="padding:18px;margin-bottom:12px;border-color:#16a34a44">
+      <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:5px">Resultado do mês</div>
+      <div id="fin-res-valor" style="font-family:'Figtree',sans-serif;font-size:2.1rem;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:14px">R$ 0,00</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Entradas</div>
+          <div id="fin-res-ent" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#4ade80">R$ 0,00</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Saídas</div>
+          <div id="fin-res-sai" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#f87171">R$ 0,00</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:9px;padding:10px 12px">
+          <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text4);margin-bottom:3px">Fixas</div>
+          <div id="fin-res-fix" style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:#fbbf24">R$ 0,00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Abas -->
+    <div class="toggle-row" style="margin-bottom:12px">
+      <button class="toggle-btn active" id="fin-aba-lanc" onclick="finAba('lanc')" style="font-size:.76rem;padding:8px">Lançamentos</button>
+      <button class="toggle-btn" id="fin-aba-fix" onclick="finAba('fix')" style="font-size:.76rem;padding:8px">Contas fixas</button>
+    </div>
+
+    <!-- Lançamentos -->
+    <div id="fin-sec-lanc">
+      <button onclick="finAbrirModal()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;margin-bottom:12px">+ Novo lançamento</button>
+      <div id="fin-lista"></div>
+    </div>
+
+    <!-- Contas fixas -->
+    <div id="fin-sec-fix" style="display:none">
+      <div class="card" style="padding:14px 16px;margin-bottom:12px">
+        <div style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4);margin-bottom:4px">Total fixas ativas neste mês</div>
+        <div id="fin-total-fixas" style="font-family:'Figtree',sans-serif;font-size:1.5rem;font-weight:800;color:#f87171;letter-spacing:-.02em">R$ 0,00</div>
+        <div style="font-size:.68rem;color:var(--text4);margin-top:3px">Descontado do resultado automaticamente todo mês</div>
+      </div>
+      <button onclick="finAbrirModalFixa()" style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;margin-bottom:12px">+ Nova conta fixa</button>
+      <div id="fin-lista-fixas"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL — novo lançamento -->
+<div id="fin-ov-lanc" onclick="finFecharSeFora(event,'fin-ov-lanc')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Novo lançamento</div>
+      <button onclick="finFechar('fin-ov-lanc')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <button id="fin-tab-ent" onclick="finSetDir('ent')" style="padding:9px;border-radius:8px;border:1.5px solid #16a34a;background:#16a34a22;color:#4ade80;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Entrada</button>
+      <button id="fin-tab-sai" onclick="finSetDir('sai')" style="padding:9px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text4);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Saída</button>
+    </div>
+
+    <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);margin-bottom:7px">Categoria</div>
+    <div id="fin-cats" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px"></div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor (R$)</label>
+      <input type="number" id="fin-inp-val" placeholder="0,00" step="0.01" inputmode="decimal" style="font-size:1.2rem;font-weight:700">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Descrição (opcional)</label>
+      <input type="text" id="fin-inp-desc" placeholder="Ex: repasse ML, compra de estoque...">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Conta</label>
+        <select id="fin-inp-conta" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit"></select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Data</label>
+        <input type="date" id="fin-inp-data">
+      </div>
+    </div>
+    <button onclick="finSalvarLancamento()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Salvar lançamento</button>
+  </div>
+</div>
+
+<!-- MODAL — nova conta fixa -->
+<div id="fin-ov-fixa" onclick="finFecharSeFora(event,'fin-ov-fixa')" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2500;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="width:100%;max-width:420px;padding:20px;max-height:88vh;overflow-y:auto;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'Figtree',sans-serif;font-size:1rem;font-weight:800;color:var(--text)">Nova conta fixa</div>
+      <button onclick="finFechar('fin-ov-fixa')" style="background:none;border:none;color:var(--text4);font-size:1.2rem;cursor:pointer;line-height:1">×</button>
+    </div>
+
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Descrição</label>
+      <input type="text" id="fin-fix-desc" placeholder="Ex: Contabilidade, empréstimo...">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Valor mensal (R$)</label>
+      <input type="number" id="fin-fix-val" placeholder="0,00" step="0.01" inputmode="decimal" style="font-size:1.1rem;font-weight:700">
+    </div>
+    <div class="field" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Tipo</label>
+      <select id="fin-fix-tipo" onchange="finToggleTermino()" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit">
+        <option value="divida">Dívida — tem data de fim</option>
+        <option value="op">Operacional — recorrente</option>
+      </select>
+    </div>
+    <div class="field" id="fin-campo-termino" style="margin-bottom:10px">
+      <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Termina em</label>
+      <input type="month" id="fin-fix-termino">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Dia do vencimento</label>
+        <input type="number" id="fin-fix-dia" placeholder="Ex: 5" min="1" max="31" inputmode="numeric">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Conta debitada</label>
+        <select id="fin-fix-conta" style="width:100%;padding:9px 12px;border:1.5px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;outline:none;font-family:inherit"></select>
+      </div>
+    </div>
+    <button onclick="finSalvarNovaFixa()" style="width:100%;padding:12px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif">Salvar conta fixa</button>
+  </div>
+</div>
+
+<!-- ===== CONCILIAÇÃO ML + MP ===== -->
+<div id="page-conc" class="page">
+  <div style="max-width:1400px;margin:0 auto;padding:20px 18px">
+
+    <!-- Toasts -->
+    <div id="conc-toasts" style="position:fixed;top:16px;right:16px;z-index:3000;display:flex;flex-direction:column;gap:5px;pointer-events:none"></div>
+
+    <div class="pg-head" style="--pg:#0891b2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Conciliação</div>
+          <div class="pg-sub">Mercado Livre e Mercado Pago · venda → liberação → recebimento</div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="card" style="padding:16px;margin-bottom:14px;border-color:#0891b244">
+      <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:4px">CARREGAR RELATÓRIOS</div>
+      <div style="font-size:.72rem;color:var(--text4);margin-bottom:12px;line-height:1.6">
+        <strong style="color:var(--text3)">Mercado Livre:</strong> Menu → Faturamento → Tarifas e Pagamentos → Conciliação (obrigatório, baixar Vendas e Liberações)<br>
+        <strong style="color:var(--text3)">Mercado Pago:</strong> Site (PC) → Relatórios → Extrair relatórios de venda e recebimento → baixar em XLS (opcional)
+      </div>
+
+      <!-- Drop zone -->
+      <div id="conc-drop"
+        ondrop="concDrop(event)" ondragover="concDragOver(event)" ondragleave="concDragLeave()"
+        onclick="concPickFile()"
+        style="border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:12px">
+        <input type="file" id="conc-file-input" multiple accept=".xlsx,.xls" style="display:none" onchange="concFileChange(event)">
+        <div style="font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:5px">Arraste os arquivos aqui ou clique para selecionar</div>
+        <div style="font-size:.72rem;color:var(--text4)">Aceita múltiplos arquivos de uma vez · a ferramenta identifica cada um automaticamente · formato .xlsx ou .xls</div>
+      </div>
+
+      <!-- Status dos arquivos -->
+      <div id="conc-files-lista" style="margin-bottom:12px"></div>
+
+      <button id="conc-btn" onclick="conciliarAgora()" disabled
+        style="width:100%;padding:11px;background:var(--text);color:var(--bg);border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;opacity:.5;transition:opacity .2s"
+        onfocus="this.style.opacity='1'" onblur="this.style.opacity=this.disabled?'.5':'1'">
+        Conciliar agora
+      </button>
+      <style>#conc-btn:not([disabled]){opacity:1}</style>
+    </div>
+
+    <!-- RESULTADO (oculto até conciliar) -->
+    <div id="conc-resultado" style="display:none">
+
+      <!-- Avisos -->
+      <div id="conc-avisos" style="margin-bottom:10px"></div>
+
+      <!-- KPIs -->
+      <div id="conc-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:14px"></div>
+
+      <!-- Tarifas + MP -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="card" style="padding:14px">
+          <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Para onde foi o dinheiro — tarifas cobradas</div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="text-align:left;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Tarifa</th>
+              <th style="text-align:center;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Ops</th>
+              <th style="text-align:right;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text4);padding:4px 0;border-bottom:1px solid var(--border)">Total</th>
+            </tr></thead>
+            <tbody id="conc-tb-tarifas"></tbody>
+          </table>
+        </div>
+        <div class="card" style="padding:14px">
+          <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Camada Mercado Pago</div>
+          <div id="conc-mp-box"></div>
+        </div>
+      </div>
+
+      <!-- Tabela principal -->
+      <div class="card" style="padding:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <select id="conc-f-status" onchange="concFiltrar()" style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:.76rem;color:var(--text);outline:none">
+            <option value="">Todos os status</option>
+            <option value="OK">OK</option>
+            <option value="Aguardando liberação">Aguardando liberação</option>
+            <option value="Competência anterior">Competência anterior</option>
+            <option value="Tarifa não prevista">Tarifa não prevista</option>
+            <option value="Devolução / reclamação">Devolução / reclamação</option>
+            <option value="Recebeu a menos sem explicação">⚠️ Recebeu a menos</option>
+            <option value="Recebeu a mais">Recebeu a mais</option>
+          </select>
+          <input type="text" id="conc-f-busca" oninput="concFiltrar()" placeholder="Buscar operação, item ou SKU..."
+            style="background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:.76rem;color:var(--text);outline:none;flex:1;min-width:200px">
+          <button onclick="concSoReclamar()"
+            style="background:#dc262622;border:1px solid #dc262644;border-radius:7px;padding:6px 12px;font-size:.74rem;font-weight:700;color:#f87171;cursor:pointer;white-space:nowrap">
+            ⚠️ Só o que dá para reclamar
+          </button>
+          <button onclick="concExportarCSV()"
+            style="background:var(--text);color:var(--bg);border:none;border-radius:7px;padding:6px 12px;font-size:.74rem;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:auto">
+            Exportar CSV
+          </button>
+        </div>
+        <div style="overflow-x:auto;max-height:520px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+          <table style="width:100%;border-collapse:collapse;font-size:.73rem">
+            <thead>
+              <tr style="background:var(--card);position:sticky;top:0;z-index:1">
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Operação</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Data</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Item</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">SKU</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Com. prev.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Com. cobr.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Δ com.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Frete prev.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Frete cobr.</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Δ frete</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Liq. previsto</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Lib. venda</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Lib. envio</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4);white-space:nowrap">Liq. recebido</th>
+                <th style="padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Diferença</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Status</th>
+                <th style="text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)">Explicação</th>
+              </tr>
+            </thead>
+            <tbody id="conc-tbody"></tbody>
+          </table>
+        </div>
+        <div id="conc-contagem" style="font-size:.7rem;color:var(--text4);margin-top:8px"></div>
+      </div>
+
+    </div><!-- /resultado -->
+
+    <!-- Explicação das camadas -->
+    <div class="card" style="padding:16px;margin-top:14px">
+      <div style="font-family:'Figtree',sans-serif;font-size:.78rem;font-weight:800;color:var(--text);margin-bottom:10px">Como a conciliação funciona</div>
+      <div style="font-size:.74rem;color:var(--text3);line-height:1.75">
+        <strong style="color:var(--text2)">Camada 1 — Venda → Liberação:</strong> o ML liberou o que prometeu? Agrupa por Número da operação (cada venda ocupa 2 linhas: item e frete). A "Liberação de envio" vem sem número de operação — liga só pelo Número do envio.<br>
+        <strong style="color:var(--text2)">Camada 2 — Tarifas pelo nome:</strong> compara a lista de tarifas da venda com a da liberação. Tarifa que só apareceu na liberação → "Tarifa não prevista" (custo real, não erro de pagamento).<br>
+        <strong style="color:var(--text2)">Camada 3 — Mercado Pago:</strong> confirma se o valor liberado pelo ML entrou no saldo do MP. Compara com a Liberação (não com o recebido total) — o relatório de cobranças do MP não inclui a Liberação de envio.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PROMPT FOTOS ML ===== -->
+<div id="page-prompt" class="page">
+  <div style="max-width:800px;margin:0 auto;padding:20px 18px">
+
+    <div class="pg-head" style="--pg:#7c3aed">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="pg-wm"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <div class="pg-in">
+        <div>
+          <div class="pg-brand">Calculadora REAL</div>
+          <div class="pg-title">Prompt Fotos</div>
+          <div class="pg-sub">Preencha uma vez e gere os 7 prompts prontos para usar</div>
+        </div>
+        <div class="pg-acts">
+          <button class="btn-back" onclick="showPage('home')" style="padding:7px 13px;font-size:.74rem">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs do produto -->
+    <div class="card" style="padding:16px;margin-bottom:14px;border-color:#7c3aed44">
+      <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span style="width:20px;height:20px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:4px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></span>
+        DADOS DO PRODUTO
+      </div>
+      <div class="field" style="margin-bottom:10px">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">Nome do produto</label>
+        <input type="text" id="pf-produto" placeholder="Ex: Kit Bambu Banheiro 4 peças" oninput="gerarPromptsFotos()">
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label style="font-size:.72rem;font-weight:600;color:var(--text2)">O que não pode faltar / características obrigatórias</label>
+        <textarea id="pf-caract" placeholder="Ex: cor bege, bambu natural, sem plástico, conjunto com saboneteira, porta-escova, copo e dispenser" oninput="gerarPromptsFotos()" style="height:72px;resize:none"></textarea>
+      </div>
+    </div>
+
+    <!-- Prompts gerados -->
+    <div id="pf-prompts" style="display:flex;flex-direction:column;gap:10px">
+
+      <!-- Card de prompt -->
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">01 · Capa</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Parar o Scroll · 1200×1200px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-01')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-01" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">02 · Kit Completo</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Conteúdo · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-02')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-02" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">03 · Uso Real</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Resultado na vida real · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-03')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-03" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">04 · Benefícios</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Características em valor · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-04')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-04" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">05 · Qualidade</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Detalhes construtivos · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-05')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-05" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">06 · Especificações</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Medidas e técnico · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-06')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-06" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden;border-color:#7c3aed33;margin-bottom:30px">
+        <div style="background:linear-gradient(135deg,#7c3aed22,#4f46e522);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div>
+            <span style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa">07 · Fechamento</span>
+            <span style="font-size:.7rem;color:var(--text3);margin-left:8px">Fechar a venda · 1200×1540px</span>
+          </div>
+          <button onclick="copiarPrompt('pf-txt-07')" style="background:var(--card);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.68rem;font-weight:700;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar</button>
+        </div>
+        <pre id="pf-txt-07" style="font-family:'Figtree',sans-serif;font-size:.76rem;color:var(--text2);line-height:1.65;padding:12px 14px;margin:0;white-space:pre-wrap;word-break:break-word"></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Sidebar — mostra que há mais itens abaixo enquanto não chegou ao fim
+(function(){
+  function liga(){
+    var l=document.getElementById('sbLista'), f=document.getElementById('sbFade'), m=document.getElementById('sbMore');
+    if(!l||!f||!m) return;
+    function att(){
+      var mais = l.scrollHeight - l.scrollTop - l.clientHeight > 6;
+      f.classList.toggle('on', mais);
+      m.classList.toggle('on', mais);
+    }
+    l.addEventListener('scroll', att, {passive:true});
+    window.addEventListener('resize', att);
+    m.addEventListener('click', function(){ l.scrollBy({top:150, behavior:'smooth'}); });
+    setTimeout(att, 80); setTimeout(att, 400);
+    window._sbAtt = att;
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', liga);
+  else liga();
+})();
+</script>
+</body>
+</html>

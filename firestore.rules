@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin = sua conta (crie ela primeiro no Authentication do projeto novo)
+    function admin() {
+      return request.auth != null && request.auth.token.email == 'ollmestorerj@gmail.com';
+    }
+
+    function dono(email) {
+      return request.auth != null && request.auth.token.email == email;
+    }
+
+    // Campos que só o servidor (webhook Kiwify / conexão ML) pode alterar
+    function camposProtegidos() {
+      return ['ativo', 'validade', 'plano', 'origem', 'kiwify', 'criadoEm',
+              'ml_conectado', 'ml_user_id', 'ml_nickname', 'ml_conectadoEm',
+              'ml_erro', 'consentimento_ml'];
+    }
+
+    match /usuarios/{email} {
+      allow read, write: if admin();
+      allow read: if dono(email);
+      // A conta é criada pelo webhook; o cliente só atualiza campos livres
+      allow update: if dono(email) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(camposProtegidos());
+
+      // Tokens e perfil do Mercado Livre: só o servidor lê e escreve
+      match /ml/{doc} {
+        allow read: if admin();
+      }
+
+      // Produtos, eventos, financeiro etc. do próprio cliente
+      match /{colecao}/{doc} {
+        allow read, write: if admin() || (dono(email) && colecao != 'ml');
+      }
+    }
+
+    // Configurações globais (versão do app etc.)
+    match /config/{doc} {
+      allow read: if request.auth != null;
+      allow write: if admin();
+    }
+
+    // Log dos webhooks da Kiwify: só o admin lê
+    match /kiwify_eventos/{doc} {
+      allow read: if admin();
+    }
+
+    // Todo o resto (logs da Kiwify, etc.) fica fechado para o app
+    match /{caminho=**} {
+      allow read, write: if false;
+    }
+  }
+}

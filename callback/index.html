@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Conectando…</title>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var q = new URLSearchParams();
+  if (p.get('code'))  q.set('ml_code', p.get('code'));
+  if (p.get('state')) q.set('ml_state', p.get('state'));
+  if (p.get('error')) q.set('ml_error', p.get('error'));
+  location.replace('/?' + q.toString());
+})();
+</script></head>
+<body style="background:#0f0f12;color:#ccc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh">Conectando sua conta…</body></html>

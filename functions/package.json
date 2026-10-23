@@ -1,0 +1,15 @@
+{
+  "name": "calculadora-produto-functions",
+  "description": "Cloud Functions — Calculadora REAL (produto Kiwify)",
+  "scripts": {
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": { "node": "22" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "firebase-functions": "^6.0.0"
+  },
+  "private": true
+}

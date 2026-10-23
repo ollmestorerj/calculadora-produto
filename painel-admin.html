@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel Admin | Calculadora REAL</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--o:#F0A070;--p:#6B21A8;--p2:#8b5cf6;--bg:#0d0a14;--bg2:#0a0812;--card:#140f20;--border:#1e1a2e;--text:#ddd8f0;--text2:#a89ec8;--text3:#7a6f9a}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:#110e1a;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:.95rem;font-weight:900;color:var(--o);letter-spacing:.04em}
+.container{padding:20px 24px;max-width:1200px;margin:0 auto}
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center}
+.kpi .kl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px}
+.kpi .kv{font-size:1.4rem;font-weight:900;color:var(--o)}
+.alerta-item{display:flex;align-items:center;gap:10px;background:#7f1d1d18;border:1px solid #ef444430;border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:.76rem}
+.alerta-item.warning{background:#78350f18;border-color:#d9770640}
+.alerta-item .al-nome{font-weight:700;color:var(--text);flex:1}
+.alerta-item .al-info{color:var(--text2)}
+.alerta-item .al-badge{padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;white-space:nowrap}
+.alerta-item .al-btn{background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:7px;padding:5px 12px;font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:7px 16px;border:1.5px solid var(--border);border-radius:20px;background:none;color:var(--text3);font-size:.76rem;font-weight:600;cursor:pointer;transition:all .2s}
+.tab.active{border-color:var(--o);color:var(--o);background:#F0A07010}
+.table-wrap{overflow-x:auto;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:.76rem}
+th{background:#1a1428;padding:9px 11px;text-align:left;font-weight:700;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid #1a1428;color:var(--text2);vertical-align:middle}
+tr:hover td{background:#1a1428}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700}
+.badge.ativo{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
+.badge.inativo{background:#7f1d1d22;color:#f87171;border:1px solid #ef444444}
+.badge.recente{background:#F0A07022;color:var(--o);border:1px solid #F0A07044}
+.badge.mensal{background:#2563eb22;color:#60a5fa;border:1px solid #2563eb44}
+.badge.anual{background:#16a34a22;color:#4ade80;border:1px solid #16a34a44}
+.badge.mentorado{background:#7c3aed22;color:#a78bfa;border:1px solid #7c3aed44}
+.badge.vitalicio{background:#d9770622;color:#fbbf24;border:1px solid #d9770644}
+.badge.trimestral{background:#0891b222;color:#22d3ee;border:1px solid #0891b244}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.section-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:.74rem;color:var(--text2);margin-bottom:3px;font-weight:500}
+.field input,.field select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.86rem;color:var(--text);background:#1a1428;outline:none;font-family:inherit;transition:border .2s}
+.field input:focus,.field select:focus{border-color:var(--o)}
+.field select option{background:#1a1428}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn-primary{padding:10px 18px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer}
+.btn-secondary{padding:8px 14px;background:var(--card);color:var(--text2);border:1.5px solid var(--border);border-radius:9px;font-size:.76rem;font-weight:600;cursor:pointer}
+.btn-danger{background:#7f1d1d22;border:1px solid #ef444444;color:#f87171;border-radius:7px;padding:5px 9px;font-size:.7rem;cursor:pointer}
+.btn-edit{background:#1e3a5f22;border:1px solid #1e3a5f55;color:#60a5fa;border-radius:7px;padding:5px 9px;font-size:.7rem;cursor:pointer}
+.msg-ok{background:#05291622;border:1px solid #16a34a44;border-radius:9px;padding:10px 12px;color:#4ade80;font-size:.78rem;margin-top:8px;display:none}
+.msg-err{background:#7f1d1d22;border:1px solid #ef444455;border-radius:9px;padding:10px 12px;color:#f87171;font-size:.78rem;margin-top:8px;display:none}
+.loading{text-align:center;padding:30px;opacity:.4;font-size:.82rem}
+.search-input{padding:7px 12px;border:1.5px solid var(--border);border-radius:9px;background:#1a1428;color:var(--text);font-size:.76rem;outline:none;width:220px}
+.search-input:focus{border-color:var(--o)}
+.tag-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tag{padding:4px 12px;border:1px solid var(--border);border-radius:20px;font-size:.68rem;font-weight:600;cursor:pointer;color:var(--text3);background:none}
+.tag.active{border-color:var(--o);color:var(--o);background:#F0A07010}
+.prod-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#1a1428;border-radius:8px;margin-bottom:5px;flex-wrap:wrap;gap:8px}
+.mrr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.mrr-card{background:#1a1428;border-radius:10px;padding:12px 14px;text-align:center}
+.mrr-card .ml{font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mrr-card .mv{font-size:1.3rem;font-weight:900}
+.eng-bar{height:6px;background:var(--border);border-radius:10px;overflow:hidden;margin-top:4px}
+.eng-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#6B21A8,#F0A070)}
+#login-admin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:340px;text-align:center}
+.login-box h2{font-size:1.1rem;font-weight:900;color:var(--o);margin-bottom:6px}
+.login-box p{font-size:.76rem;color:var(--text2);margin-bottom:22px}
+.login-box input{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:10px;background:#1a1428;color:var(--text);font-size:.95rem;text-align:center;outline:none;margin-bottom:12px;font-family:inherit}
+.login-box input:focus{border-color:var(--o)}
+.login-box button{width:100%;padding:12px;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer}
+.erro-admin{color:#f87171;font-size:.74rem;margin-top:8px;display:none}
+#app-admin{display:none}
+</style>
+</head>
+<body>
+
+<div id="login-admin">
+  <div class="login-box">
+    <div style="width:48px;height:48px;background:linear-gradient(135deg,#6B21A8,#F0A070);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h2>Painel Admin</h2>
+    <p>Acesso exclusivo RealEcom</p>
+    <input type="email" id="email-admin" placeholder="E-mail do admin" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('senha-admin').focus()">
+    <input type="password" id="senha-admin" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()">
+    <button onclick="loginAdmin()">Entrar</button>
+    <div class="erro-admin" id="erro-admin">Senha incorreta.</div>
+  </div>
+</div>
+
+<div id="app-admin">
+  <div class="header">
+    <h1>Calculadora REAL — Painel Admin</h1>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="ultima-atualizacao" style="font-size:.68rem;color:var(--text3)">—</span>
+      <button class="btn-secondary" onclick="carregarTudo()" style="padding:7px 14px;font-size:.74rem">↻ Atualizar</button>
+      <button onclick="forcarAtualizacaoGeral()" id="btn-push-versao" style="padding:7px 14px;font-size:.74rem;background:#166534;color:#fff;border:1px solid #16a34a55;border-radius:8px;font-weight:700;cursor:pointer" title="Faz todos os navegadores recarregarem a versão nova">⟳ Atualizar app de todos</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="kpis">
+      <div class="kpi"><div class="kl">Total usuários</div><div class="kv" id="kpi-usuarios">—</div></div>
+      <div class="kpi"><div class="kl">Ativos hoje</div><div class="kv" id="kpi-hoje" style="color:#4ade80">—</div></div>
+      <div class="kpi"><div class="kl">Ativos 7 dias</div><div class="kv" id="kpi-ativos" style="color:#4ade80">—</div></div>
+      <div class="kpi"><div class="kl">Nunca acessaram</div><div class="kv" id="kpi-nunca" style="color:#f87171">—</div></div>
+      <div class="kpi"><div class="kl">Total produtos</div><div class="kv" id="kpi-produtos" style="color:#c4b5fd">—</div></div>
+      <div class="kpi"><div class="kl">Margem média</div><div class="kv" id="kpi-margem">—</div></div>
+      <div class="kpi"><div class="kl">Vencem em 7d</div><div class="kv" id="kpi-vencendo" style="color:#f87171">—</div></div>
+    </div>
+
+    <div id="alertas-box" style="margin-bottom:16px"></div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('cadastrar')">Cadastrar</button>
+      <button class="tab" onclick="showTab('usuarios')">Usuários</button>
+      <button class="tab" onclick="showTab('financeiro')">Financeiro</button>
+      <button class="tab" onclick="showTab('engajamento')">Engajamento</button>
+      <button class="tab" onclick="showTab('produtos')">Produtos</button>
+      <button class="tab" onclick="showTab('insights')">Insights</button>
+      <button class="tab" style="border-color:#f87171;color:#f87171" onclick="showTab('vazamento')">⚠️ Vazamento</button>
+      <button class="tab" onclick="showTab('lixeira')">Lixeira</button>
+    </div>
+
+    <!-- CADASTRAR -->
+    <div id="tab-cadastrar">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="section-title">Novo usuário</div>
+          <div class="field"><label>Nome completo</label><input type="text" id="novo-nome" placeholder="Ex: João Silva"></div>
+          <div class="field"><label>E-mail</label><input type="email" id="novo-email" placeholder="joao@email.com"></div>
+          <div class="row2">
+            <div class="field">
+              <label>Plano</label>
+              <select id="novo-plano" onchange="atualizarValidade()">
+                <option value="mentorado">Mentorado (grátis)</option>
+                <option value="mensal">Mensal — R$ 29,90</option>
+                <option value="trimestral">Trimestral</option>
+                <option value="anual">Anual — R$ 299,90</option>
+                <option value="vitalicio">Vitalício</option>
+              </select>
+            </div>
+            <div class="field"><label>Validade</label><input type="date" id="novo-validade"></div>
+          </div>
+          <div class="field"><label>Senha inicial</label><input type="text" id="novo-senha" value="Realecom@2025"></div>
+          <div class="field"><label>Observação interna (opcional)</label><input type="text" id="novo-obs" placeholder="Ex: Veio da Kiwify, indicação..."></div>
+          <button class="btn-primary" onclick="cadastrarUsuario()" style="width:100%;margin-top:4px">Criar conta e enviar acesso</button>
+          <div class="msg-ok" id="msg-sucesso">Conta criada com sucesso! E-mail de acesso enviado.</div>
+          <div class="msg-err" id="msg-erro"></div>
+        </div>
+        <div>
+          <div class="card" style="background:#0a1628;border-color:#1e3a5f">
+            <div class="section-title" style="color:#60a5fa">Como funciona</div>
+            <div style="font-size:.76rem;color:var(--text2);line-height:1.9">
+              <div style="display:flex;gap:8px;margin-bottom:5px"><span style="color:var(--o);font-weight:700">1.</span><span>Cria a conta no Firebase com email + senha</span></div>
+              <div style="display:flex;gap:8px;margin-bottom:5px"><span style="color:var(--o);font-weight:700">2.</span><span>Salva nome, plano e validade no Firestore</span></div>
+              <div style="display:flex;gap:8px;margin-bottom:5px"><span style="color:var(--o);font-weight:700">3.</span><span>Firebase envia e-mail para o usuário criar a própria senha</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--o);font-weight:700">4.</span><span>Usuário acessa com email + senha</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">Renovar ou editar acesso</div>
+            <div class="field"><label>E-mail do usuário</label><input type="email" id="edit-email" placeholder="email@exemplo.com"></div>
+            <div class="row3">
+              <div class="field" style="margin-bottom:0"><label>Plano</label>
+                <select id="edit-plano">
+                  <option value="mentorado">Mentorado</option>
+                  <option value="mensal">Mensal</option>
+                  <option value="trimestral">Trimestral</option>
+                  <option value="anual">Anual</option>
+                  <option value="vitalicio">Vitalício</option>
+                </select>
+              </div>
+              <div class="field" style="margin-bottom:0"><label>Nova validade</label><input type="date" id="edit-validade"></div>
+              <div class="field" style="margin-bottom:0"><label>Obs. interna</label><input type="text" id="edit-obs" placeholder="Opcional"></div>
+            </div>
+            <button class="btn-primary" onclick="renovarAcesso()" style="width:100%;margin-top:10px">Salvar alterações</button>
+            <div class="msg-ok" id="msg-edit-sucesso">Acesso atualizado!</div>
+            <div class="msg-err" id="msg-edit-erro"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USUÁRIOS -->
+    <div id="tab-usuarios" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div class="tag-filter" id="filtro-plano" style="margin-bottom:0">
+          <div class="tag active" onclick="filtrarPlano('todos',this)">Todos</div>
+          <div class="tag" onclick="filtrarPlano('mentorado',this)">Mentorado</div>
+          <div class="tag" onclick="filtrarPlano('mensal',this)">Mensal</div>
+          <div class="tag" onclick="filtrarPlano('anual',this)">Anual</div>
+          <div class="tag" onclick="filtrarPlano('vitalicio',this)">Vitalício</div>
+          <div class="tag" onclick="filtrarPlano('nunca',this)">Nunca acessou</div>
+          <div class="tag" onclick="filtrarPlano('vencendo',this)" style="color:#f87171;border-color:#f87171">Vencendo</div>
+        </div>
+        <input type="text" class="search-input" id="busca-usuario" placeholder="Buscar por nome ou e-mail..." oninput="renderUsuarios()">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Plano</th><th>Validade</th><th>Último acesso</th><th>Produtos</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="tbody-usuarios"><tr><td colspan="8" class="loading">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FINANCEIRO -->
+    <div id="tab-financeiro" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="section-title">Receita recorrente mensal (MRR)</div>
+          <div class="mrr-grid">
+            <div class="mrr-card"><div class="ml">Mensais</div><div class="mv" id="mrr-mensais" style="color:#60a5fa">—</div><div style="font-size:.62rem;color:var(--text3);margin-top:2px" id="mrr-mensais-n">—</div></div>
+            <div class="mrr-card"><div class="ml">Anuais/mês</div><div class="mv" id="mrr-anuais" style="color:#4ade80">—</div><div style="font-size:.62rem;color:var(--text3);margin-top:2px" id="mrr-anuais-n">—</div></div>
+            <div class="mrr-card"><div class="ml">MRR Total</div><div class="mv" id="mrr-total" style="color:var(--o)">—</div></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:12px">
+            <div class="section-title">ARR (receita anual projetada)</div>
+            <div style="font-size:2rem;font-weight:900;color:var(--o)" id="mrr-arr">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title">Distribuição por plano</div>
+          <div id="dist-planos"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Risco de churn — vencimentos próximos (30 dias)</div>
+        <div id="lista-churn"></div>
+      </div>
+    </div>
+
+    <!-- ENGAJAMENTO -->
+    <div id="tab-engajamento" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="section-title">Mais engajados (por produtos salvos)</div>
+          <div id="top-engajados"></div>
+        </div>
+        <div class="card">
+          <div class="section-title">Risco de abandono — pagou mas não usa</div>
+          <div id="lista-risco"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUTOS -->
+    <div id="tab-produtos" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div class="section-title" style="margin-bottom:0">Todos os produtos salvos</div>
+        <input type="text" class="search-input" id="busca-prod" placeholder="Buscar produto..." oninput="filtrarProdutos()">
+      </div>
+      <div id="lista-produtos"><div class="loading">Carregando...</div></div>
+    </div>
+
+    <!-- LIXEIRA -->
+    <div id="tab-lixeira" style="display:none">
+      <div style="background:#7c2d1218;border:1px solid #d9770644;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:.8rem;font-weight:700;color:#fbbf24;margin-bottom:5px">Contas excluídas</div>
+        <div style="font-size:.74rem;color:#d4a574;line-height:1.6">Contas excluídas ficam aqui e não aparecem na lista principal. Os dados continuam salvos — restaurar devolve tudo como estava. A exclusão definitiva apaga produtos, eventos, metas e lançamentos, e não tem volta.</div>
+      </div>
+      <div id="lista-lixeira"></div>
+    </div>
+
+    <!-- VAZAMENTO -->
+    <div id="tab-vazamento" style="display:none">
+      <div style="background:#7f1d1d22;border:1px solid #ef444444;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:.8rem;font-weight:700;color:#f87171;margin-bottom:5px">⚠️ Auditoria de Vazamento de Dados</div>
+        <div style="font-size:.74rem;color:#fca5a5;line-height:1.6">Esta ferramenta identifica contas que têm produtos que parecem não ser delas — baseado na comparação entre produtos iguais em contas diferentes. Use para identificar e limpar dados contaminados.</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <button onclick="auditarVazamento()" style="background:#dc2626;color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:.8rem;font-weight:700;cursor:pointer">🔍 Rodar auditoria agora</button>
+        <button onclick="limparProdsContaminados()" id="btn-limpar-vaz" style="display:none;background:#7f1d1d;color:#fca5a5;border:1px solid #ef444444;border-radius:9px;padding:9px 18px;font-size:.8rem;font-weight:700;cursor:pointer">🗑️ Limpar produtos selecionados</button>
+      </div>
+      <div id="vaz-status" style="font-size:.78rem;color:var(--text3);margin-bottom:10px"></div>
+      <div id="vaz-resultado"></div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div id="tab-insights" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="card"><div class="section-title">Top 5 margens</div><div id="top-margens"></div></div>
+        <div class="card"><div class="section-title">Produtos marcados como comprados</div><div id="top-comprados"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card"><div class="section-title">Distribuição de preços ML</div><div id="dist-precos"></div></div>
+        <div class="card"><div class="section-title">Distribuição de margens</div><div id="dist-margens"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
+
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
+
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
+
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+<script>
+// Sem senha no código: o admin entra com o próprio e-mail e senha do Firebase
+let ADMIN_EMAIL = '';
+let ADMIN_PASS  = '';
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAv4knEI4IgKH6fRpr_3BuiuijvP2Ul2ms",
+  authDomain: "calculadora-real-ecom.firebaseapp.com",
+  projectId: "calculadora-real-ecom",
+  storageBucket: "calculadora-real-ecom.firebasestorage.app",
+  messagingSenderId: "845239286688",
+  appId: "1:845239286688:web:71018a44cabee0025842c5"
+};
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const db  = firebase.firestore();
+const auth = firebase.auth();
+
+let todosUsuarios = [], todosProdutos = [], filtroPlanoAtivo = 'todos';
+
+async function loginAdmin(){
+  const senhaDigitada = document.getElementById('senha-admin').value;
+  const erroEl = document.getElementById('erro-admin');
+  erroEl.style.display = 'none';
+
+  ADMIN_EMAIL = document.getElementById('email-admin').value.trim().toLowerCase();
+  ADMIN_PASS  = senhaDigitada;
+  if(!ADMIN_EMAIL || !ADMIN_PASS){
+    erroEl.textContent = 'Preencha e-mail e senha.';
+    erroEl.style.display = 'block';
+    return;
+  }
+
+  try{
+    // Loga com conta admin dedicada para ter permissão de leitura no Firestore
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS);
+    document.getElementById('login-admin').style.display = 'none';
+    document.getElementById('app-admin').style.display = 'block';
+    atualizarValidade();
+    carregarTudo();
+  }catch(e){
+    erroEl.textContent = 'Erro ao conectar com Firebase: ' + e.message;
+    erroEl.style.display = 'block';
+  }
+}
+
+function fmt(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtData(ts){return ts?new Date(ts).toLocaleString('pt-BR'):'—';}
+function diasAte(dataStr){
+  if(!dataStr)return null;
+  const p=dataStr.split('/');
+  if(p.length!==3)return null;
+  const d=new Date(`${p[2]}-${p[1]}-${p[0]}T23:59:59`);
+  return Math.ceil((d-Date.now())/(1000*60*60*24));
+}
+
+function atualizarValidade(){
+  const plano=document.getElementById('novo-plano').value;
+  const campo=document.getElementById('novo-validade');
+  const hoje=new Date();
+  if(plano==='mentorado'||plano==='vitalicio'){campo.value='';return;}
+  if(plano==='mensal')hoje.setMonth(hoje.getMonth()+1);
+  else if(plano==='trimestral')hoje.setMonth(hoje.getMonth()+3);
+  else if(plano==='anual')hoje.setFullYear(hoje.getFullYear()+1);
+  campo.value=hoje.toISOString().split('T')[0];
+}
+
+function showTab(tab){
+  ['cadastrar','usuarios','financeiro','engajamento','produtos','insights'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('active',['cadastrar','usuarios','financeiro','engajamento','produtos','insights'][i]===tab);
+  });
+  if(tab==='financeiro')renderFinanceiro();
+  if(tab==='engajamento')renderEngajamento();
+}
+
+async function carregarTudo(){
+  document.getElementById('ultima-atualizacao').textContent='Atualizando...';
+  try{
+    const snapshot=await db.collection('usuarios').get();
+    todosUsuarios=[];todosProdutos=[];
+    for(const doc of snapshot.docs){
+      const u={id:doc.id,...doc.data(),produtos:[]};
+      try{
+        const pd=await db.collection('usuarios').doc(doc.id).collection('produtos').doc('data').get();
+        if(pd.exists){
+          const prods=JSON.parse(pd.data().payload||'[]');
+          u.produtos=prods;
+          prods.forEach(p=>todosProdutos.push({...p,_usuario:u.nome||doc.id,_email:doc.id}));
+        }
+      }catch(e){}
+      todosUsuarios.push(u);
+    }
+    renderKPIs();renderAlertas();renderUsuarios();renderProdutos();renderInsights();
+    document.getElementById('ultima-atualizacao').textContent='Atualizado: '+new Date().toLocaleTimeString('pt-BR');
+  }catch(e){
+    document.getElementById('ultima-atualizacao').textContent='Erro ao carregar';
+    console.error(e);
+  }
+}
+
+function renderKPIs(){
+  const agora=Date.now(),set7=agora-7*864e5,setHoje=agora-864e5;
+  document.getElementById('kpi-usuarios').textContent=todosUsuarios.length;
+  document.getElementById('kpi-hoje').textContent=todosUsuarios.filter(u=>u.ultimaAtividade&&u.ultimaAtividade>setHoje).length;
+  document.getElementById('kpi-ativos').textContent=todosUsuarios.filter(u=>u.ultimaAtividade&&u.ultimaAtividade>set7).length;
+  document.getElementById('kpi-nunca').textContent=todosUsuarios.filter(u=>!u.ultimaAtividade).length;
+  document.getElementById('kpi-produtos').textContent=todosProdutos.length;
+  const comM=todosProdutos.filter(p=>p.margem&&parseFloat(p.margem)>0);
+  document.getElementById('kpi-margem').textContent=comM.length?(comM.reduce((s,p)=>s+parseFloat(p.margem),0)/comM.length).toFixed(1)+'%':'—';
+  document.getElementById('kpi-vencendo').textContent=todosUsuarios.filter(u=>{const d=diasAte(u.validade);return d!==null&&d>=0&&d<=7;}).length;
+}
+
+function renderAlertas(){
+  const box=document.getElementById('alertas-box');
+  const alertas=[];
+  todosUsuarios.forEach(u=>{
+    const d=diasAte(u.validade);
+    if(d===null)return;
+    if(d<=7)alertas.push({u,d,tipo:d<0?'expirado':d<=3?'critico':'warning'});
+  });
+  if(!alertas.length){box.innerHTML='';return;}
+  alertas.sort((a,b)=>a.d-b.d);
+  box.innerHTML=alertas.map(({u,d,tipo})=>{
+    const cor=tipo==='warning'?'#fbbf24':'#f87171';
+    const txt=d<0?'EXPIRADO':d===0?'VENCE HOJE':`VENCE EM ${d}d`;
+    return`<div class="alerta-item ${tipo==='warning'?'warning':''}">
+      <div class="al-nome">${u.nome||u.id}</div>
+      <div class="al-info">${u.email||u.id} · ${u.plano||'—'}</div>
+      <span class="al-badge" style="background:${cor}22;color:${cor};border:1px solid ${cor}44">${txt}</span>
+      <button class="al-btn" onclick="preencherEdicao('${u.email||u.id}','${u.plano||''}','${u.validade||''}','')">Renovar</button>
+    </div>`;
+  }).join('');
+}
+
+function filtrarPlano(plano,el){
+  filtroPlanoAtivo=plano;
+  document.querySelectorAll('#filtro-plano .tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderUsuarios();
+  renderLixeira();
+}
+
+function renderUsuarios(){
+  // contas na lixeira não aparecem aqui
+  const usuarios = todosUsuarios.filter(u => !u.excluido);
+  const agora=Date.now();
+  const tbody=document.getElementById('tbody-usuarios');
+  const busca=(document.getElementById('busca-usuario')?.value||'').toLowerCase();
+  const planoLabels={mentorado:'Mentorado',mensal:'Mensal',trimestral:'Trimestral',anual:'Anual',vitalicio:'Vitalício'};
+  const planoCores={mentorado:'mentorado',mensal:'mensal',trimestral:'trimestral',anual:'anual',vitalicio:'vitalicio'};
+  let lista=[...todosUsuarios];
+  if(filtroPlanoAtivo==='nunca')lista=lista.filter(u=>!u.ultimaAtividade);
+  else if(filtroPlanoAtivo==='vencendo')lista=lista.filter(u=>{const d=diasAte(u.validade);return d!==null&&d>=0&&d<=7;});
+  else if(filtroPlanoAtivo!=='todos')lista=lista.filter(u=>u.plano===filtroPlanoAtivo);
+  if(busca)lista=lista.filter(u=>(u.nome||'').toLowerCase().includes(busca)||(u.email||'').toLowerCase().includes(busca));
+  lista.sort((a,b)=>(b.ultimaAtividade||0)-(a.ultimaAtividade||0));
+  if(!lista.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;opacity:.4">Nenhum usuário encontrado</td></tr>';return;}
+  tbody.innerHTML=lista.map(u=>{
+    const diff=u.ultimaAtividade?Math.floor((agora-u.ultimaAtividade)/864e5):null;
+    const statusBadge=diff===null?'<span class="badge inativo" style="opacity:.5">Nunca</span>':
+      diff===0?'<span class="badge recente">Hoje</span>':
+      diff<=7?`<span class="badge ativo">${diff}d atrás</span>`:
+      `<span class="badge inativo">${diff}d atrás</span>`;
+    const ativoBadge=u.ativo!==false?'<span class="badge ativo">Ativo</span>':'<span class="badge inativo">Suspenso</span>';
+    const planoBadge=`<span class="badge ${planoCores[u.plano]||''}">${planoLabels[u.plano]||u.plano||'—'}</span>`;
+    const diasV=diasAte(u.validade);
+    const validadeStr=u.plano==='vitalicio'||u.plano==='mentorado'?'<span style="opacity:.5">Sem expiração</span>':
+      diasV===null?'<span style="opacity:.4">—</span>':
+      diasV<0?`<span style="color:#f87171">${u.validade} (expirado)</span>`:
+      diasV<=7?`<span style="color:#fbbf24">${u.validade} (${diasV}d)</span>`:u.validade;
+    return`<tr>
+      <td><strong style="color:var(--text)">${u.nome||'—'}</strong>${u.obs?`<div style="font-size:.63rem;color:var(--text3);margin-top:1px">${u.obs}</div>`:''}</td>
+      <td style="color:var(--o);font-size:.71rem">${u.email||u.id}</td>
+      <td>${planoBadge}</td>
+      <td style="font-size:.71rem">${validadeStr}</td>
+      <td style="font-size:.71rem">${u.ultimaAtividade?fmtData(u.ultimaAtividade):'<span style="opacity:.4">—</span>'}</td>
+      <td style="text-align:center"><strong style="color:#c4b5fd">${u.produtos.length}</strong></td>
+      <td>${ativoBadge} ${statusBadge}</td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap">
+        <button class="btn-edit" onclick="preencherEdicao('${u.email||u.id}','${u.plano||''}','${u.validade||''}','${(u.obs||'').replace(/'/g,'&apos;')}')">Editar</button>
+        <button class="btn-danger" onclick="toggleAtivo('${u.email||u.id}',${u.ativo!==false})">${u.ativo!==false?'Suspender':'Ativar'}</button>
+        <button class="btn-edit" onclick="abrirTrocaEmail('${u.email||u.id}')" title="Migrar a conta para outro e-mail">E-mail</button>
+        ${u.excluido
+          ? `<button class="btn-edit" style="border-color:#16a34a;color:#4ade80" onclick="restaurarConta('${u.email||u.id}')">Restaurar</button>`
+          : `<button class="btn-danger" onclick="excluirConta('${u.email||u.id}')" title="Move para a lixeira — os dados são preservados">Excluir</button>`}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFinanceiro(){
+  const mensais=todosUsuarios.filter(u=>u.plano==='mensal'&&u.ativo!==false);
+  const anuais=todosUsuarios.filter(u=>u.plano==='anual'&&u.ativo!==false);
+  const mrrM=mensais.length*29.90,mrrA=(anuais.length*299.90)/12,mrrT=mrrM+mrrA;
+  document.getElementById('mrr-mensais').textContent=fmt(mrrM);
+  document.getElementById('mrr-mensais-n').textContent=mensais.length+' usuários';
+  document.getElementById('mrr-anuais').textContent=fmt(mrrA);
+  document.getElementById('mrr-anuais-n').textContent=anuais.length+' usuários';
+  document.getElementById('mrr-total').textContent=fmt(mrrT);
+  document.getElementById('mrr-arr').textContent=fmt(mrrT*12);
+  const planos=['mentorado','mensal','trimestral','anual','vitalicio'];
+  const planoLabels={mentorado:'Mentorado',mensal:'Mensal',trimestral:'Trimestral',anual:'Anual',vitalicio:'Vitalício'};
+  const planoCores={mentorado:'#a78bfa',mensal:'#60a5fa',trimestral:'#22d3ee',anual:'#4ade80',vitalicio:'#fbbf24'};
+  const total=todosUsuarios.length||1;
+  document.getElementById('dist-planos').innerHTML=planos.map(p=>{
+    const n=todosUsuarios.filter(u=>u.plano===p).length;
+    const pct=Math.round(n/total*100);
+    return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:3px"><span style="color:var(--text2)">${planoLabels[p]}</span><span style="color:${planoCores[p]};font-weight:700">${n} (${pct}%)</span></div><div class="eng-bar"><div class="eng-fill" style="width:${pct}%;background:${planoCores[p]}"></div></div></div>`;
+  }).join('');
+  const churn=todosUsuarios.filter(u=>{const d=diasAte(u.validade);return d!==null&&d<=30;}).sort((a,b)=>(diasAte(a.validade)||0)-(diasAte(b.validade)||0));
+  document.getElementById('lista-churn').innerHTML=churn.length?
+    `<table style="width:100%"><thead><tr><th>Nome</th><th>Plano</th><th>Vencimento</th><th>Situação</th><th>Ação</th></tr></thead><tbody>`+
+    churn.map(u=>{
+      const d=diasAte(u.validade);
+      const cor=d<0?'#f87171':d<=7?'#f87171':'#fbbf24';
+      const txt=d<0?'Expirado':d===0?'Hoje':`${d} dias`;
+      return`<tr><td><strong style="color:var(--text);font-size:.76rem">${u.nome||'—'}</strong></td><td style="font-size:.72rem">${u.plano||'—'}</td><td style="font-size:.72rem">${u.validade||'—'}</td><td><span class="badge" style="background:${cor}22;color:${cor};border:1px solid ${cor}44">${txt}</span></td><td><button class="btn-edit" onclick="preencherEdicao('${u.email||u.id}','${u.plano||''}','${u.validade||''}','')">Renovar</button></td></tr>`;
+    }).join('')+'</tbody></table>':
+    '<div style="opacity:.4;font-size:.78rem;padding:10px">Nenhum vencimento próximo nos próximos 30 dias</div>';
+}
+
+function renderEngajamento(){
+  const porProdutos=[...todosUsuarios].filter(u=>u.produtos.length>0).sort((a,b)=>b.produtos.length-a.produtos.length).slice(0,8);
+  const maxP=porProdutos[0]?.produtos.length||1;
+  document.getElementById('top-engajados').innerHTML=porProdutos.length?porProdutos.map(u=>{
+    const pct=Math.round(u.produtos.length/maxP*100);
+    const diff=u.ultimaAtividade?Math.floor((Date.now()-u.ultimaAtividade)/864e5):null;
+    return`<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:3px"><span style="color:var(--text)">${u.nome||u.id}</span><span style="color:#c4b5fd;font-weight:700">${u.produtos.length} prods${diff!==null?` · ${diff}d`:''}</span></div><div class="eng-bar"><div class="eng-fill" style="width:${pct}%"></div></div></div>`;
+  }).join(''):'<div style="opacity:.4;font-size:.78rem">Nenhum produto salvo ainda</div>';
+  const risco=todosUsuarios.filter(u=>{
+    const pago=u.plano==='mensal'||u.plano==='anual'||u.plano==='trimestral';
+    if(!pago)return false;
+    if(!u.ultimaAtividade)return true;
+    return Math.floor((Date.now()-u.ultimaAtividade)/864e5)>14;
+  });
+  document.getElementById('lista-risco').innerHTML=risco.length?risco.map(u=>{
+    const diff=u.ultimaAtividade?Math.floor((Date.now()-u.ultimaAtividade)/864e5):null;
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:.74rem"><div><div style="color:var(--text);font-weight:600">${u.nome||'—'}</div><div style="color:var(--text3);font-size:.66rem">${u.plano||'—'} · ${u.email||u.id}</div></div><span class="badge inativo">${diff===null?'Nunca acessou':diff+'d sem acessar'}</span></div>`;
+  }).join(''):'<div style="opacity:.4;font-size:.78rem;padding:10px">Nenhum risco identificado</div>';
+}
+
+let _termoBusca='';
+function filtrarProdutos(){_termoBusca=document.getElementById('busca-prod').value.toLowerCase();renderProdutos();}
+function renderProdutos(){
+  const el=document.getElementById('lista-produtos');
+  const lista=(_termoBusca?todosProdutos.filter(p=>p.nome&&p.nome.toLowerCase().includes(_termoBusca)):todosProdutos).slice().sort((a,b)=>(b.id||0)-(a.id||0));
+  if(!lista.length){el.innerHTML='<div class="loading">Nenhum produto encontrado</div>';return;}
+  el.innerHTML=lista.map(p=>{
+    const mc=parseFloat(p.margem)>=15?'#4ade80':parseFloat(p.margem)>=10?'#F0A070':'#f87171';
+    return`<div class="prod-row"><div><div style="font-weight:700;color:var(--text);font-size:.80rem">${p.nome||'—'}${p.comprado?' <span style="color:#4ade80;font-size:.64rem">comprado</span>':''}</div><div style="font-size:.66rem;color:var(--text3)">${p._usuario} · ${p.id?new Date(p.id).toLocaleDateString('pt-BR'):'—'}</div></div><div style="display:flex;gap:14px;flex-wrap:wrap;font-size:.76rem"><span style="color:#c4b5fd;font-weight:700">${fmt(p.precoCalc||0)}</span><span style="color:${mc}">Margem: ${parseFloat(p.margem||0).toFixed(1)}%</span><span style="color:var(--text2)">ROI: ${parseFloat(p.roi||0).toFixed(1)}%</span><span style="color:var(--text3)">Custo: ${fmt(p.custoReal||0)}</span></div></div>`;
+  }).join('');
+}
+
+function renderInsights(){
+  const comMargem=[...todosProdutos].filter(p=>p.margem&&parseFloat(p.margem)>0).sort((a,b)=>parseFloat(b.margem)-parseFloat(a.margem)).slice(0,5);
+  document.getElementById('top-margens').innerHTML=comMargem.length?comMargem.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.76rem"><span style="color:var(--text2)">${i+1}. ${p.nome} <span style="color:var(--text3)">(${p._usuario})</span></span><span style="font-weight:800;color:#4ade80">${parseFloat(p.margem).toFixed(1)}%</span></div>`).join(''):'<div style="opacity:.4;font-size:.76rem">Nenhum produto</div>';
+  const comprados=todosProdutos.filter(p=>p.comprado);
+  document.getElementById('top-comprados').innerHTML=comprados.length?comprados.map(p=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:.76rem"><span style="color:var(--text2)">${p.nome}</span><span style="color:var(--text3);font-size:.66rem">${p._usuario}</span></div>`).join(''):'<div style="opacity:.4;font-size:.76rem">Nenhum</div>';
+  const comML=todosProdutos.filter(p=>p.precoML>0);
+  const faixasP=[{l:'Até R$50',min:0,max:50},{l:'R$50–100',min:50,max:100},{l:'R$100–200',min:100,max:200},{l:'R$200–500',min:200,max:500},{l:'Acima R$500',min:500,max:Infinity}];
+  const maxCP=Math.max(...faixasP.map(f=>comML.filter(p=>p.precoML>=f.min&&p.precoML<f.max).length),1);
+  document.getElementById('dist-precos').innerHTML=faixasP.map(f=>{const c=comML.filter(p=>p.precoML>=f.min&&p.precoML<f.max).length;const pct=Math.round(c/maxCP*100);return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span style="color:var(--text2)">${f.l}</span><span style="color:var(--o);font-weight:700">${c} prod</span></div><div class="eng-bar"><div class="eng-fill" style="width:${pct}%"></div></div></div>`;}).join('');
+  const faixasM=[{l:'Prejuízo (<0%)',min:-Infinity,max:0,cor:'#f87171'},{l:'Baixa (0–9,99%)',min:0,max:10,cor:'#F0A070'},{l:'Boa (10–14,99%)',min:10,max:15,cor:'#4ade80'},{l:'Ótima (15–19,99%)',min:15,max:20,cor:'#4ade80'},{l:'Excelente (≥20%)',min:20,max:Infinity,cor:'#c4b5fd'}];
+  const comM2=todosProdutos.filter(p=>p.margem!=null);
+  const maxCM=Math.max(...faixasM.map(f=>comM2.filter(p=>parseFloat(p.margem)>=f.min&&parseFloat(p.margem)<f.max).length),1);
+  document.getElementById('dist-margens').innerHTML=faixasM.map(f=>{const c=comM2.filter(p=>parseFloat(p.margem)>=f.min&&parseFloat(p.margem)<f.max).length;const pct=Math.round(c/maxCM*100);return`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span style="color:var(--text2)">${f.l}</span><span style="color:${f.cor};font-weight:700">${c} prod</span></div><div class="eng-bar"><div class="eng-fill" style="width:${pct}%;background:${f.cor}"></div></div></div>`;}).join('');
+}
+
+// ============================================================
+// AUDITORIA DE VAZAMENTO DE DADOS
+// ============================================================
+
+// Mapa de produtos selecionados para limpeza
+let _prodsParaLimpar = {}; // { email: [prodId, ...] }
+
+async function auditarVazamento(){
+  const statusEl = document.getElementById('vaz-status');
+  const resultEl = document.getElementById('vaz-resultado');
+  statusEl.textContent = 'Carregando dados de todas as contas...';
+  resultEl.innerHTML = '<div class="loading">Analisando...</div>';
+
+  // Carrega todos os produtos de todas as contas
+  const snap = await db.collection('usuarios').get();
+  const contasProdutos = []; // { email, nome, prods[] }
+
+  for(const doc of snap.docs){
+    const email = doc.id;
+    try{
+      const prodDoc = await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').get();
+      if(prodDoc.exists){
+        const prods = JSON.parse(prodDoc.data().payload || '[]');
+        if(prods.length > 0){
+          contasProdutos.push({ email, nome: doc.data().nome || email, prods });
+        }
+      }
+    }catch(e){ console.warn('Erro ao carregar', email, e); }
+  }
+
+  statusEl.textContent = `${contasProdutos.length} contas com produtos analisadas.`;
+
+  // Detectar produtos duplicados entre contas
+  // Um produto é suspeito se tem o mesmo nome E mesmo custo em contas diferentes
+  const todosProd = [];
+  contasProdutos.forEach(c => {
+    c.prods.forEach(p => {
+      todosProd.push({ ...p, _email: c.email, _nome_conta: c.nome });
+    });
+  });
+
+  // Agrupar por nome + custoReal para detectar duplicatas
+  const grupos = {};
+  todosProd.forEach(p => {
+    const key = (p.nome||'').toLowerCase().trim() + '_' + (p.custoReal||0);
+    if(!grupos[key]) grupos[key] = [];
+    grupos[key].push(p);
+  });
+
+  // Filtrar grupos com mais de 1 conta diferente
+  const suspeitos = Object.entries(grupos).filter(([k, prods]) => {
+    const emails = [...new Set(prods.map(p => p._email))];
+    return emails.length > 1;
+  });
+
+  if(!suspeitos.length){
+    resultEl.innerHTML = '<div style="background:#0a1f1222;border:1px solid #16a34a44;border-radius:10px;padding:14px;color:#4ade80;font-size:.8rem">✅ Nenhum vazamento detectado! Todos os produtos parecem únicos por conta.</div>';
+    return;
+  }
+
+  _prodsParaLimpar = {};
+  document.getElementById('btn-limpar-vaz').style.display = '';
+
+  // Identificar qual conta é a "original" (a que salvou primeiro — menor ID/timestamp)
+  let html = `<div style="font-size:.8rem;font-weight:700;color:#f87171;margin-bottom:12px">⚠️ ${suspeitos.length} produto(s) suspeito(s) encontrado(s) em múltiplas contas:</div>`;
+
+  suspeitos.forEach(([key, prods]) => {
+    const emails = [...new Set(prods.map(p => p._email))];
+    // Conta original = quem tem o prod com menor timestamp (id)
+    const sorted = [...prods].sort((a,b) => (a.id||0) - (b.id||0));
+    const original = sorted[0]._email;
+    const contaminadas = prods.filter(p => p._email !== original);
+
+    html += `<div style="background:#1c1c20;border:1px solid #ef444433;border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="font-size:.82rem;font-weight:700;color:#f0f0f0;margin-bottom:6px">${prods[0].nome || '—'}</div>
+      <div style="font-size:.72rem;color:var(--text3);margin-bottom:8px">Custo: R$ ${(prods[0].custoReal||0).toFixed(2)} · Margem: ${(prods[0].margem||0).toFixed(1)}%</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#0a1f1222;border-radius:7px;border:1px solid #16a34a44">
+          <span style="font-size:.7rem;background:#16a34a22;color:#4ade80;padding:1px 7px;border-radius:20px;font-weight:700">ORIGINAL</span>
+          <span style="font-size:.76rem;color:#e8e8e8">${original}</span>
+          <span style="font-size:.68rem;color:var(--text3);margin-left:auto">${sorted[0].id ? new Date(sorted[0].id).toLocaleDateString('pt-BR') : '—'}</span>
+        </div>
+        ${contaminadas.map(p => {
+          const cbId = 'cb_' + p._email.replace(/[^a-z0-9]/gi,'_') + '_' + (p.id||0);
+          if(!_prodsParaLimpar[p._email]) _prodsParaLimpar[p._email] = [];
+          _prodsParaLimpar[p._email].push(p.id);
+          return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#7f1d1d22;border-radius:7px;border:1px solid #ef444433">
+            <input type="checkbox" id="${cbId}" checked style="accent-color:#f87171;width:14px;height:14px" data-email="${p._email}" data-id="${p.id||0}">
+            <span style="font-size:.7rem;background:#dc262622;color:#f87171;padding:1px 7px;border-radius:20px;font-weight:700">CONTAMINADO</span>
+            <span style="font-size:.76rem;color:#fca5a5">${p._email}</span>
+            <span style="font-size:.68rem;color:var(--text3);margin-left:auto">${p.id ? new Date(p.id).toLocaleDateString('pt-BR') : '—'}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+
+  resultEl.innerHTML = html;
+  statusEl.textContent = `Análise concluída. Marque os produtos contaminados e clique em "Limpar".`;
+}
+
+async function limparProdsContaminados(){
+  // Coletar checkboxes marcados
+  const checkboxes = document.querySelectorAll('#vaz-resultado input[type=checkbox]:checked');
+  if(!checkboxes.length){ alert('Nenhum produto selecionado para limpeza.'); return; }
+
+  const confirmMsg = `Você está prestes a REMOVER ${checkboxes.length} produto(s) de contas contaminadas.
+
+Essa ação é IRREVERSÍVEL.
+
+Confirma?`;
+  if(!confirm(confirmMsg)) return;
+
+  let removidos = 0;
+  const porConta = {};
+
+  checkboxes.forEach(cb => {
+    const email = cb.dataset.email;
+    const id = parseInt(cb.dataset.id);
+    if(!porConta[email]) porConta[email] = [];
+    porConta[email].push(id);
+  });
+
+  for(const [email, ids] of Object.entries(porConta)){
+    try{
+      const prodDoc = await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').get();
+      if(!prodDoc.exists) continue;
+      let prods = JSON.parse(prodDoc.data().payload || '[]');
+      const antes = prods.length;
+      prods = prods.filter(p => !ids.includes(p.id));
+      await db.collection('usuarios').doc(email)
+        .collection('produtos').doc('data').set({ payload: JSON.stringify(prods) });
+      removidos += antes - prods.length;
+    }catch(e){
+      console.error('Erro ao limpar', email, e);
+    }
+  }
+
+  alert(`✅ ${removidos} produto(s) removido(s) com sucesso.`);
+  auditarVazamento(); // Roda de novo para confirmar
+}
+
+async function cadastrarUsuario(){
+  const nome=document.getElementById('novo-nome').value.trim();
+  const email=document.getElementById('novo-email').value.trim().toLowerCase();
+  const plano=document.getElementById('novo-plano').value;
+  const val=document.getElementById('novo-validade').value;
+  const senha=document.getElementById('novo-senha').value;
+  const obs=document.getElementById('novo-obs').value.trim();
+  const msgOk=document.getElementById('msg-sucesso'),msgErr=document.getElementById('msg-erro');
+  msgOk.style.display='none';msgErr.style.display='none';
+  if(!nome||!email||!senha){msgErr.textContent='Preencha nome, e-mail e senha.';msgErr.style.display='block';return;}
+  if(senha.length<6){msgErr.textContent='Senha mínimo 6 caracteres.';msgErr.style.display='block';return;}
+  try{
+    // Cria usuário — Firebase loga como ele automaticamente
+    const cred=await auth.createUserWithEmailAndPassword(email,senha);
+    await cred.user.updateProfile({displayName:nome});
+    let validadeStr='';
+    if(val&&plano!=='vitalicio'&&plano!=='mentorado')validadeStr=new Date(val+'T00:00:00').toLocaleDateString('pt-BR');
+    await db.collection('usuarios').doc(email).set({nome,email,plano,validade:validadeStr,ativo:true,criadoEm:Date.now(),uid:cred.user.uid,obs:obs||''});
+    await auth.sendPasswordResetEmail(email);
+    // Volta a logar como admin após criar o usuário
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS);
+    msgOk.style.display='block';
+    ['novo-nome','novo-email','novo-obs'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('novo-senha').value='Realecom@2025';
+    setTimeout(carregarTudo,1500);
+  }catch(e){
+    // Tenta relog como admin mesmo em caso de erro
+    await auth.signInWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASS).catch(()=>{});
+    const msgs={'auth/email-already-in-use':'E-mail já cadastrado.','auth/invalid-email':'E-mail inválido.','auth/weak-password':'Senha muito fraca.'};
+    msgErr.textContent=msgs[e.code]||'Erro: '+e.message;
+    msgErr.style.display='block';
+  }
+}
+
+async function renovarAcesso(){
+  const email=document.getElementById('edit-email').value.trim().toLowerCase();
+  const val=document.getElementById('edit-validade').value;
+  const plano=document.getElementById('edit-plano').value;
+  const obs=document.getElementById('edit-obs').value.trim();
+  const msgOk=document.getElementById('msg-edit-sucesso'),msgErr=document.getElementById('msg-edit-erro');
+  msgOk.style.display='none';msgErr.style.display='none';
+  if(!email){msgErr.textContent='Informe o e-mail.';msgErr.style.display='block';return;}
+  try{
+    let validadeStr='';
+    if(val&&plano!=='vitalicio'&&plano!=='mentorado')validadeStr=new Date(val+'T00:00:00').toLocaleDateString('pt-BR');
+    const upd={plano,validade:validadeStr,ativo:true};
+    if(obs)upd.obs=obs;
+    await db.collection('usuarios').doc(email).set(upd,{merge:true});
+    msgOk.style.display='block';setTimeout(carregarTudo,1000);
+  }catch(e){msgErr.textContent='Erro: '+e.message;msgErr.style.display='block';}
+}
+
+async function toggleAtivo(email,ativoAtual){
+  if(!confirm(`Deseja ${ativoAtual?'suspender':'ativar'} o acesso de ${email}?`))return;
+  await db.collection('usuarios').doc(email).set({ativo:!ativoAtual},{merge:true});
+  carregarTudo();
+}
+
+function preencherEdicao(email,plano,validade,obs){
+  document.getElementById('edit-email').value=email;
+  document.getElementById('edit-plano').value=plano||'mensal';
+  document.getElementById('edit-obs').value=obs||'';
+  if(validade){const p=validade.split('/');if(p.length===3)document.getElementById('edit-validade').value=`${p[2]}-${p[1]}-${p[0]}`;}
+  showTab('cadastrar');
+  setTimeout(()=>document.getElementById('edit-email').scrollIntoView({behavior:'smooth'}),100);
+}
+
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
+
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================================================
+// ATUALIZAÇÃO FORÇADA — grava a versão no Firestore.
+// Todo app aberto detecta e recarrega sozinho em até 1 minuto.
+// ============================================================
+async function forcarAtualizacaoGeral(){
+  if(!confirm('Isto faz o app recarregar em todos os navegadores abertos.\n\nConfirma?')) return;
+  const btn = document.getElementById('btn-push-versao');
+  const txt = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try{
+    const v = new Date().toISOString().replace(/[^0-9]/g,'').slice(0,14);
+    await db.collection('config').doc('app').set({
+      versao: v,
+      atualizadoEm: Date.now(),
+      por: 'painel'
+    }, {merge:true});
+    btn.textContent = '✓ Enviado';
+    btn.style.background = '#166534';
+    setTimeout(()=>{ btn.textContent = txt; btn.disabled = false; }, 2600);
+  }catch(e){
+    alert('Erro: ' + e.message);
+    btn.textContent = txt; btn.disabled = false;
+  }
+}
+
+// ============================================================
+// CONTAS — excluir, restaurar, migrar e-mail
+// ============================================================
+
+const SUBCOLECOES = ['produtos','eventos','metas','financeiro_lanc','financeiro_fix','sazonalidades'];
+
+async function excluirConta(email){
+  if(!confirm('Mover a conta de ' + email + ' para a lixeira?\n\nOs dados são preservados e podem ser restaurados.')) return;
+  await db.collection('usuarios').doc(email).set({
+    excluido: true, ativo: false, excluidoEm: Date.now()
+  }, {merge:true});
+  carregarTudo();
+}
+
+async function restaurarConta(email){
+  if(!confirm('Restaurar a conta de ' + email + '?')) return;
+  await db.collection('usuarios').doc(email).set({
+    excluido: false, ativo: true, restauradoEm: Date.now()
+  }, {merge:true});
+  carregarTudo();
+}
+
+async function excluirDefinitivo(email){
+  if(!confirm('APAGAR DEFINITIVAMENTE a conta de ' + email + '?\n\nTodos os produtos, eventos, metas e lançamentos serão perdidos.\nEsta ação não tem volta.')) return;
+  if(prompt('Para confirmar, digite EXCLUIR:') !== 'EXCLUIR') return;
+  try{
+    for(const c of SUBCOLECOES){
+      const snap = await db.collection('usuarios').doc(email).collection(c).get();
+      for(const d of snap.docs) await d.ref.delete();
+    }
+    await db.collection('usuarios').doc(email).delete();
+    alert('Conta apagada.');
+    carregarTudo();
+  }catch(e){ alert('Erro: ' + e.message); }
+}
+
+function abrirTrocaEmail(email){
+  document.getElementById('mig-de').value = email;
+  document.getElementById('mig-para').value = '';
+  document.getElementById('mig-status').style.display = 'none';
+  document.getElementById('modal-email').style.display = 'flex';
+}
+
+async function migrarEmail(){
+  const de = document.getElementById('mig-de').value.trim().toLowerCase();
+  const para = document.getElementById('mig-para').value.trim().toLowerCase();
+  const st = document.getElementById('mig-status');
+  const btn = document.getElementById('btn-migrar');
+
+  if(!para || !para.includes('@')){ alert('Informe um e-mail válido.'); return; }
+  if(de === para){ alert('Os e-mails são iguais.'); return; }
+
+  const existe = await db.collection('usuarios').doc(para).get();
+  if(existe.exists){ alert('Já existe uma conta com ' + para + '.'); return; }
+  if(!confirm('Migrar todos os dados de ' + de + ' para ' + para + '?')) return;
+
+  btn.disabled = true;
+  st.style.display = 'block';
+  const log = m => { st.textContent = m; };
+
+  try{
+    log('Copiando o cadastro…');
+    const doc = await db.collection('usuarios').doc(de).get();
+    if(!doc.exists) throw new Error('Conta de origem não encontrada.');
+    await db.collection('usuarios').doc(para).set({
+      ...doc.data(), emailAnterior: de, migradoEm: Date.now()
+    });
+
+    for(const c of SUBCOLECOES){
+      log('Copiando ' + c + '…');
+      const snap = await db.collection('usuarios').doc(de).collection(c).get();
+      for(const d of snap.docs){
+        await db.collection('usuarios').doc(para).collection(c).doc(d.id).set(d.data());
+      }
+    }
+
+    log('Removendo a conta antiga…');
+    for(const c of SUBCOLECOES){
+      const snap = await db.collection('usuarios').doc(de).collection(c).get();
+      for(const d of snap.docs) await d.ref.delete();
+    }
+    await db.collection('usuarios').doc(de).delete();
+
+    log('Concluído.');
+    alert('Dados migrados para ' + para + '.\n\nAgora cadastre esse e-mail na aba "Cadastrar" para o usuário conseguir fazer login.');
+    document.getElementById('modal-email').style.display = 'none';
+    carregarTudo();
+  }catch(e){
+    log('Erro: ' + e.message);
+    alert('Erro na migração: ' + e.message);
+  }
+  btn.disabled = false;
+}
+
+function renderLixeira(){
+  const el = document.getElementById('lista-lixeira');
+  if(!el) return;
+  const lixo = todosUsuarios.filter(u => u.excluido);
+  if(!lixo.length){
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);font-size:.82rem">A lixeira está vazia.</div>';
+    return;
+  }
+  el.innerHTML = '<table><thead><tr><th>E-mail</th><th>Nome</th><th>Plano</th><th>Excluída em</th><th>Ações</th></tr></thead><tbody>'
+    + lixo.map(u => {
+        const em = u.excluidoEm ? new Date(u.excluidoEm).toLocaleDateString('pt-BR') : '—';
+        const id = u.email || u.id;
+        return '<tr><td style="font-size:.76rem">' + id + '</td>'
+          + '<td style="font-size:.76rem">' + (u.nome || '—') + '</td>'
+          + '<td style="font-size:.74rem">' + (u.plano || '—') + '</td>'
+          + '<td style="font-size:.74rem;color:var(--text3)">' + em + '</td>'
+          + '<td><button class="btn-edit" style="border-color:#16a34a;color:#4ade80" onclick="restaurarConta(\'' + id + '\')">Restaurar</button> '
+          + '<button class="btn-danger" onclick="excluirDefinitivo(\'' + id + '\')">Apagar de vez</button></td></tr>';
+      }).join('')
+    + '</tbody></table>';
+}
+
+</script>
+<div id="modal-email" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.68);z-index:3000;align-items:center;justify-content:center;padding:18px">
+  <div class="card" style="width:100%;max-width:460px;margin:0">
+    <div class="section-title">Migrar conta para outro e-mail</div>
+    <div style="background:#7c2d1218;border:1px solid #d9770644;border-radius:9px;padding:11px 13px;font-size:.74rem;color:#d4a574;line-height:1.6;margin-bottom:14px">
+      Isto copia todos os dados — produtos, eventos, metas e lançamentos — para o novo e-mail e apaga o registro antigo.<br><br>
+      <strong style="color:#fbbf24">Importante:</strong> o login do Firebase continua no e-mail antigo. Depois de migrar, cadastre o novo e-mail em "Cadastrar" para o usuário conseguir entrar.
+    </div>
+    <div class="field"><label>E-mail atual</label><input type="email" id="mig-de" readonly style="opacity:.6"></div>
+    <div class="field"><label>Novo e-mail</label><input type="email" id="mig-para" placeholder="novo@exemplo.com"></div>
+    <div id="mig-status" style="font-size:.76rem;color:var(--text2);margin:10px 0;display:none"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-secondary" onclick="document.getElementById('modal-email').style.display='none'" style="flex:1">Cancelar</button>
+      <button class="btn-primary" onclick="migrarEmail()" id="btn-migrar" style="flex:1">Migrar conta</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
