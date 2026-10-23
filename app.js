@@ -325,9 +325,9 @@ async function fazerLogin(){
   }
 }
 
-async function esqueceuSenha(){
+async function esqueceuSenha(primeiro){
   const email=document.getElementById('login-email').value.trim().toLowerCase();
-  if(!email){mostrarErroLogin('Digite seu e-mail acima para recuperar a senha.');return;}
+  if(!email){mostrarErroLogin(primeiro?'Digite acima o e-mail que você usou na compra da Kiwify.':'Digite seu e-mail acima para recuperar a senha.');return;}
   try{
     const auth=await getAuth();
     await auth.sendPasswordResetEmail(email);
@@ -336,7 +336,8 @@ async function esqueceuSenha(){
     el.style.background='#05291622';
     el.style.borderColor='#16a34a44';
     el.style.color='var(--in)';
-    el.textContent='📧 E-mail de recuperação enviado! Verifique sua caixa de entrada.';
+    el.textContent=(primeiro?'📧 Enviamos para '+email+' o link para criar sua senha.':'📧 Enviamos para '+email+' o link para trocar sua senha.')
+      +' Confira também o spam/promoções. Se não chegar em 5 minutos, confirme se este é o e-mail usado na compra.';
     (function(){const el=document.getElementById('login-erro');if(el)el.style.display='none';})();
   }catch(e){
     mostrarErroLogin('Não foi possível enviar o e-mail. Verifique se o endereço está correto.');

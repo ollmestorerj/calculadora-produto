@@ -678,7 +678,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
       <span class="login-badge">🔐 ACESSO EXCLUSIVO PARA SELLERS</span>
     </div>
     <div class="login-title">Calculadora REAL</div>
-    <div class="login-sub">Entre com seu e-mail e senha.<br>Primeiro acesso? Use o link “Crie sua senha” que chegou no e-mail da compra.</div>
+    <div class="login-sub">Use o <strong>mesmo e-mail da sua compra na Kiwify</strong>.<br>Primeiro acesso? Digite o e-mail e clique em “Criar minha senha”.</div>
     <div class="login-field">
       <label>E-mail</label>
       <input class="login-input" type="email" id="login-email" placeholder="seu@email.com" autocomplete="email" spellcheck="false" style="letter-spacing:0;text-transform:none;font-weight:600" onkeydown="if(event.key==='Enter')document.getElementById('login-senha').focus()">
@@ -695,7 +695,8 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     <div class="login-loading" id="login-loading"><span>Verificando...</span></div>
     <div class="login-validade" id="login-validade"></div>
     <div style="text-align:center;margin-top:12px">
-      <button onclick="esqueceuSenha()" style="background:none;border:none;color:var(--text2);font-size:.76rem;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
+      <button onclick="esqueceuSenha(true)" style="background:none;border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:.78rem;font-weight:700;cursor:pointer;margin-bottom:8px">Primeiro acesso? Criar minha senha</button><br>
+      <button onclick="esqueceuSenha(false)" style="background:none;border:none;color:var(--text2);font-size:.76rem;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
     </div>
     <div style="text-align:center;margin-top:10px;font-size:.68rem;color:var(--text3)">
       <a href="termos.html" target="_blank" style="color:inherit">Termos de Uso</a> · <a href="privacidade.html" target="_blank" style="color:inherit">Privacidade</a>
@@ -1296,7 +1297,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
-<script src="app.js?v=1792778273"></script>
+<script src="app.js?v=1792794155"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');

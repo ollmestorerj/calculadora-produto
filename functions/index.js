@@ -51,17 +51,33 @@ function somaDias(d, dias) {
   return r;
 }
 
-function assinaturaValida(req, token) {
-  const recebida = String(req.query.signature || "");
+function assinaturaValida(req, tokenBruto) {
+  const recebida = String(req.query.signature || "").trim().toLowerCase();
+  // Remove espaços/quebras de linha que entram ao colar o token no terminal
+  const token = String(tokenBruto || "").trim();
   if (!recebida || !token) return false;
-  const candidatos = [];
-  if (req.rawBody) candidatos.push(req.rawBody);
-  candidatos.push(Buffer.from(JSON.stringify(req.body || {})));
-  return candidatos.some((corpo) => {
-    const esperada = crypto.createHmac("sha1", token).update(corpo).digest("hex");
-    return esperada.length === recebida.length &&
-      crypto.timingSafeEqual(Buffer.from(esperada), Buffer.from(recebida));
+  const corpos = [];
+  if (req.rawBody) corpos.push(req.rawBody);
+  corpos.push(Buffer.from(JSON.stringify(req.body || {})));
+  const calculadas = [];
+  for (const corpo of corpos) {
+    for (const alg of ["sha1", "sha256"]) {
+      const esperada = crypto.createHmac(alg, token).update(corpo).digest("hex");
+      calculadas.push(`${alg}:${esperada.slice(0, 8)}`);
+      if (esperada.length === recebida.length &&
+          crypto.timingSafeEqual(Buffer.from(esperada), Buffer.from(recebida))) return true;
+    }
+  }
+  // Diagnóstico (não expõe o token): ajuda a achar divergência de formato
+  logger.warn("Assinatura não confere", {
+    recebidaInicio: recebida.slice(0, 8),
+    tamanhoRecebida: recebida.length,
+    tamanhoToken: token.length,
+    tamanhoTokenBruto: String(tokenBruto || "").length,
+    tamanhoRawBody: req.rawBody ? req.rawBody.length : 0,
+    calculadas,
   });
+  return false;
 }
 
 // Classifica o evento da Kiwify em: liberar | bloquear | cancelar | ignorar
