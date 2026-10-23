@@ -697,6 +697,9 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     <div style="text-align:center;margin-top:12px">
       <button onclick="esqueceuSenha()" style="background:none;border:none;color:var(--text2);font-size:.76rem;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
     </div>
+    <div style="text-align:center;margin-top:10px;font-size:.68rem;color:var(--text3)">
+      <a href="termos.html" target="_blank" style="color:inherit">Termos de Uso</a> · <a href="privacidade.html" target="_blank" style="color:inherit">Privacidade</a>
+    </div>
     <div class="login-footer">
       Ainda não tem acesso? <a href="https://wa.me/5521979509790" target="_blank">Fale com a gente</a>
     </div>
@@ -714,7 +717,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     <div class="login-sub" id="conectar-sub">Assim a Calculadora usa os dados reais da sua loja nas análises.</div>
     <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:.76rem;line-height:1.5;color:var(--text2);margin:18px 0 16px;text-align:left">
       <input type="checkbox" id="conectar-aceite" onchange="atualizarBotaoConectar()" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--o)">
-      <span>Autorizo a realecom a acessar e armazenar os dados de vendas, anúncios e reputação da minha conta do Mercado Livre para gerar as análises da Calculadora, conforme a <a href="privacidade.html" target="_blank" style="color:var(--o)">Política de Privacidade</a>. Posso revogar o acesso a qualquer momento nas configurações do Mercado Livre.</span>
+      <span>Autorizo a realecom a acessar e armazenar os dados de vendas, anúncios e reputação da minha conta do Mercado Livre para gerar as análises da Calculadora, conforme os <a href="termos.html" target="_blank" style="color:var(--o)">Termos de Uso</a> e a <a href="privacidade.html" target="_blank" style="color:var(--o)">Política de Privacidade</a>. Posso revogar o acesso a qualquer momento nas configurações do Mercado Livre.</span>
     </label>
     <button class="btn-login" id="btn-conectar-ml" onclick="iniciarConexaoML()" disabled style="opacity:.5">Conectar Mercado Livre →</button>
     <div class="login-erro" id="conectar-erro"></div>
