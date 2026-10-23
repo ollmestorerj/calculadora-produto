@@ -308,6 +308,7 @@ body.light .cal-event.sazonal{background:#fef3c7;color:#b45309}
 .home-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 18px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:block;color:inherit;user-select:none}
 .home-card:hover{border-color:var(--border2);transform:translateY(-2px)}
 @media(max-width:720px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:720px){.home-main-grid{grid-template-columns:1fr!important}}
 @media(max-width:420px){.home-tools-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important}}
 #page-home *:not(input):not(textarea):not(button){cursor:default}
 #page-home .home-card,#page-home .home-card *{cursor:pointer}
@@ -747,7 +748,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     </div>
 
     <!-- Cards grandes: Calculadora + Dashboard -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:780px;margin-bottom:12px">
+    <div class="home-main-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:780px;margin-bottom:12px">
       <div class="home-card" onclick="showPage('calc')" style="padding:22px 20px;border-color:var(--border);text-align:left">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
           <div style="width:44px;height:44px;background:linear-gradient(135deg,#6B21A8,#9333ea);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px #6B21A840"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg></div>
@@ -773,7 +774,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
     </div>
 
     <!-- Cards médios: 8 ferramentas em 2 fileiras de 4 -->
-    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:900px">
+    <div class="home-tools-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:780px">
 
       <div class="home-card" onclick="showPage('cal')" style="padding:20px 14px;text-align:center">
         <div style="width:44px;height:44px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;box-shadow:0 4px 12px #2563eb40"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
@@ -1292,7 +1293,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
-<script src="app.js?v=1792603220"></script>
+<script src="app.js?v=1792778273"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');

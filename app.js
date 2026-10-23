@@ -4654,6 +4654,8 @@ window.addEventListener('error', function(ev){
 });
 window.addEventListener('unhandledrejection', function(ev){
   console.error('Promise rejeitada:', ev.reason);
+  // Falhas de service worker (notificações antigas do domínio) não afetam o uso
+  if(/ServiceWorker|service worker/i.test(String(ev.reason && (ev.reason.message||ev.reason)))) return;
   mostrarErroTela('Algo deu errado ao carregar dados. Recarregue a página se persistir.');
 });
 
