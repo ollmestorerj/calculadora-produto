@@ -373,6 +373,7 @@ function entrarNoApp(dados, pagina){
   if(elVal) elVal.textContent=dados.validade&&dados.validade!=='—'?dados.validade:'Sem expiração';
   const elPlano=document.getElementById('home-kpi-plano');
   if(elPlano) elPlano.textContent=dados.plano?'Plano '+dados.plano:'Acesso liberado';
+  carregarAvisos(dados);
 
   fbGet('produtos','realecom_prods','[]').then(prods=>{
     setCached('realecom_prods',prods);
@@ -5008,3 +5009,96 @@ async function concluirConexaoML(code){
     });
   }catch(e){}
 })();
+
+
+// ============================================================
+// AVISOS — ofertas e comunicados exibidos dentro da Calculadora.
+// Gerenciados no painel admin (Firestore: config/avisos).
+// Se o documento ainda não existir, valem os avisos padrão abaixo.
+// ============================================================
+const AVISOS_PADRAO = [
+  { id:'anual', ativo:true, local:'home', publico:'mensal', cor:'#16a34a', icone:'estrela',
+    titulo:'Mude para o plano anual e economize R$ 159,78',
+    texto:'12 meses de Calculadora REAL por R$ 199,98, o equivalente a R$ 16,67 por mês.',
+    botao:'Quero o anual', link:'https://pay.kiwify.com.br/6H9q8KP' },
+  { id:'metodo-real', ativo:true, local:'home', publico:'todos', cor:'#7c3aed', icone:'livro',
+    titulo:'Método Real: aprenda a montar a sua operação no Mercado Livre',
+    texto:'Curso gravado da realecom: estrutura da loja, conta, logística a partir de SP, precificação e demanda.',
+    botao:'Conhecer o Método Real', link:'https://pay.kiwify.com.br/RCQ6nBI' }
+];
+
+const AVISO_ICONES = {
+  estrela:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+  livro:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  megafone:'<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  presente:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'
+};
+
+function _avisosFechados(){
+  try{ return JSON.parse(localStorage.getItem('realecom_avisos_fechados')||'[]'); }catch(e){ return []; }
+}
+function fecharAviso(id){
+  try{
+    const f=_avisosFechados(); if(f.indexOf(id)<0) f.push(id);
+    localStorage.setItem('realecom_avisos_fechados', JSON.stringify(f));
+  }catch(e){}
+  document.querySelectorAll('[data-aviso="'+id+'"]').forEach(el=>{ if(el.id!=='aviso-topo') el.remove(); });
+  const topo=document.getElementById('aviso-topo');
+  if(topo && topo.dataset.aviso===id){ topo.style.display='none'; document.body.style.paddingTop=''; }
+  const box=document.getElementById('avisos-home');
+  if(box && !box.children.length) box.style.display='none';
+  registrarAtividade('aviso_fechado_'+id);
+}
+function _esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function _linkSeguro(u){ return /^https:\/\//i.test(String(u||'')) ? String(u) : '#'; }
+function _corSegura(c){ return /^#[0-9a-f]{3,8}$/i.test(String(c||'')) ? c : '#f97316'; }
+function _idSeguro(id){ return String(id||'').replace(/[^\w-]/g,''); }
+
+async function carregarAvisos(dados){
+  try{
+    let lista = AVISOS_PADRAO;
+    try{
+      const db=await getDB();
+      const doc=await db.collection('config').doc('avisos').get();
+      if(doc.exists && Array.isArray(doc.data().lista)) lista=doc.data().lista;
+    }catch(e){}
+    const plano=String((dados&&dados.plano)||'').toLowerCase();
+    const fechados=_avisosFechados();
+    const visiveis=lista.filter(a=>a && a.ativo && fechados.indexOf(a.id)<0 &&
+      (!a.publico || a.publico==='todos' || a.publico===plano));
+    const fechar=id=>'<button class="aviso-close" title="Fechar" onclick="fecharAviso(\''+id+'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>';
+
+    const box=document.getElementById('avisos-home');
+    if(box){
+      box.innerHTML='';
+      visiveis.filter(a=>a.local!=='topo').forEach(a=>{
+        const id=_idSeguro(a.id), cor=_corSegura(a.cor);
+        const ic=AVISO_ICONES[a.icone]||AVISO_ICONES.info;
+        const d=document.createElement('div');
+        d.className='aviso-card'; d.dataset.aviso=id; d.style.borderColor=cor+'66';
+        d.innerHTML='<div class="av-ic" style="background:'+cor+'"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ic+'</svg></div>'
+          +'<div><div class="av-t">'+_esc(a.titulo)+'</div>'+(a.texto?'<div class="av-x">'+_esc(a.texto)+'</div>':'')+'</div>'
+          +(a.botao&&a.link?'<a class="av-b" style="background:'+cor+'" href="'+_esc(_linkSeguro(a.link))+'" target="_blank" rel="noopener" onclick="registrarAtividade(\'aviso_clique_'+id+'\')">'+_esc(a.botao)+'</a>':'')
+          +fechar(id);
+        box.appendChild(d);
+      });
+      box.style.display=box.children.length?'flex':'none';
+    }
+
+    const topo=document.getElementById('aviso-topo');
+    const t=visiveis.find(a=>a.local==='topo');
+    if(topo){
+      if(t){
+        const id=_idSeguro(t.id);
+        topo.dataset.aviso=id;
+        topo.style.background=_corSegura(t.cor);
+        topo.innerHTML='<span>'+_esc(t.titulo)+(t.texto?' — '+_esc(t.texto):'')+'</span>'
+          +(t.botao&&t.link?'<a href="'+_esc(_linkSeguro(t.link))+'" target="_blank" rel="noopener" onclick="registrarAtividade(\'aviso_clique_'+id+'\')">'+_esc(t.botao)+'</a>':'')
+          +fechar(id);
+        topo.style.display='flex';
+        document.body.style.paddingTop=topo.offsetHeight+'px';
+      }else{ topo.style.display='none'; document.body.style.paddingTop=''; }
+    }
+  }catch(e){ console.warn('carregarAvisos:', e); }
+}

@@ -520,6 +520,18 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 .aula-item.assistida .aula-titulo{color:var(--text3)}
 .aula-desc{font-size:.7rem;color:var(--text4);margin-top:2px;line-height:1.4}
 .aula-abrir{width:16px;height:16px;color:var(--text4);flex-shrink:0}
+/* ===== Avisos (gerenciados no painel admin) ===== */
+.aviso-card{position:relative;display:flex;align-items:center;gap:16px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px 44px 16px 18px}
+.aviso-card .av-ic{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.aviso-card .av-t{font-size:.95rem;font-weight:800;color:var(--text)}
+.aviso-card .av-x{font-size:.8rem;color:var(--text2);margin-top:2px;line-height:1.45}
+.aviso-card .av-b{margin-left:auto;flex-shrink:0;border-radius:10px;padding:10px 16px;font-size:.82rem;font-weight:800;color:#fff;text-decoration:none;white-space:nowrap}
+.aviso-close{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--text3);cursor:pointer;padding:6px;line-height:0;border-radius:8px}
+.aviso-close:hover{color:var(--text)}
+#aviso-topo{position:fixed;top:0;left:0;right:0;z-index:900;display:none;align-items:center;justify-content:center;gap:12px;padding:9px 44px 9px 16px;font-size:.82rem;font-weight:600;color:#fff;text-align:center}
+#aviso-topo a{color:#fff;font-weight:800;text-decoration:underline;white-space:nowrap}
+#aviso-topo .aviso-close{top:4px;right:6px;color:#ffffffcc}
+@media(max-width:640px){.aviso-card{flex-wrap:wrap}.aviso-card .av-b{margin-left:0;width:100%;text-align:center}}
 </style>
 </head>
 <body>
@@ -671,6 +683,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <!-- ===== HOME ===== -->
 
 <!-- ===== LOGIN ===== -->
+<div id="aviso-topo"></div>
 <div id="page-login" class="page active">
   <div class="login-box">
     <div class="login-logo"><img src="logo.png" alt="RealEcom"></div>
@@ -737,6 +750,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
       <img src="logo.png" class="logo-img" alt="RealEcom" style="height:72px;object-fit:contain">
     </div>
     <div id="home-usuario" style="font-size:.82rem;color:var(--text2);margin-bottom:20px;text-align:center"></div>
+    <div id="avisos-home" style="width:100%;max-width:780px;display:none;flex-direction:column;gap:10px;margin-bottom:14px"></div>
 
 
     <!-- Card destaque Sazonalidades -->
@@ -1297,7 +1311,7 @@ tr.atual .mg-pill{background:var(--mark);color:var(--mark-fg)}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
-<script src="app.js?v=1792805511"></script>
+<script src="app.js?v=1792808900"></script>
 <script>
 function toggleSenha(){
   const input=document.getElementById('login-senha');

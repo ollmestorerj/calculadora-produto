@@ -129,6 +129,7 @@ tr:hover td{background:#1a1428}
       <button class="tab" onclick="showTab('insights')">Insights</button>
       <button class="tab" style="border-color:#f87171;color:#f87171" onclick="showTab('vazamento')">⚠️ Vazamento</button>
       <button class="tab" onclick="showTab('lixeira')">Lixeira</button>
+      <button class="tab" id="tabbtn-avisos" onclick="abrirAvisos()">Avisos</button>
     </div>
 
     <!-- CADASTRAR -->
@@ -269,6 +270,25 @@ tr:hover td{background:#1a1428}
         <div style="font-size:.74rem;color:#d4a574;line-height:1.6">Contas excluídas ficam aqui e não aparecem na lista principal. Os dados continuam salvos — restaurar devolve tudo como estava. A exclusão definitiva apaga produtos, eventos, metas e lançamentos, e não tem volta.</div>
       </div>
       <div id="lista-lixeira"></div>
+    </div>
+
+    <!-- AVISOS -->
+    <div id="tab-avisos" style="display:none">
+      <div class="card">
+        <div class="section-title">Avisos dentro da Calculadora</div>
+        <div style="font-size:.78rem;color:var(--text2);line-height:1.6">
+          Ofertas e comunicados que aparecem para os clientes. <b>Local</b>: card na home ou faixa no topo (só 1 faixa aparece por vez).
+          <b>Público</b>: todos, só quem assina o mensal ou só o anual. O cliente pode fechar cada aviso; para mostrar de novo, crie com outro ID.
+        </div>
+      </div>
+      <div id="avisos-lista"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn-secondary" onclick="novoAviso()">+ Novo aviso</button>
+        <button class="btn-secondary" onclick="restaurarAvisosPadrao()">Restaurar padrão</button>
+        <button class="btn-primary" onclick="salvarAvisos()">Salvar avisos</button>
+      </div>
+      <div class="msg-ok" id="avisos-ok">Avisos salvos. Os clientes veem na próxima vez que abrirem a Calculadora.</div>
+      <div class="msg-err" id="avisos-err"></div>
     </div>
 
     <!-- VAZAMENTO -->
@@ -1031,5 +1051,84 @@ function renderLixeira(){
     </div>
   </div>
 </div>
+
+<script>
+// ===== AVISOS (config/avisos) =====
+const AVISOS_PADRAO_ADMIN = [
+  { id:'anual', ativo:true, local:'home', publico:'mensal', cor:'#16a34a', icone:'estrela',
+    titulo:'Mude para o plano anual e economize R$ 159,78',
+    texto:'12 meses de Calculadora REAL por R$ 199,98, o equivalente a R$ 16,67 por mês.',
+    botao:'Quero o anual', link:'https://pay.kiwify.com.br/6H9q8KP' },
+  { id:'metodo-real', ativo:true, local:'home', publico:'todos', cor:'#7c3aed', icone:'livro',
+    titulo:'Método Real: aprenda a montar a sua operação no Mercado Livre',
+    texto:'Curso gravado da realecom: estrutura da loja, conta, logística a partir de SP, precificação e demanda.',
+    botao:'Conhecer o Método Real', link:'https://pay.kiwify.com.br/RCQ6nBI' }
+];
+let _avisos = [];
+
+function _escA(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function abrirAvisos(){
+  document.querySelectorAll('[id^="tab-"]').forEach(d=>{ if(d.id!=='tab-avisos') d.style.display='none'; });
+  document.getElementById('tab-avisos').style.display='block';
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tabbtn-avisos').classList.add('active');
+  try{
+    const doc=await db.collection('config').doc('avisos').get();
+    _avisos = (doc.exists && Array.isArray(doc.data().lista)) ? doc.data().lista : JSON.parse(JSON.stringify(AVISOS_PADRAO_ADMIN));
+  }catch(e){ _avisos = JSON.parse(JSON.stringify(AVISOS_PADRAO_ADMIN)); }
+  renderAvisos();
+}
+
+function renderAvisos(){
+  const opt=(v,lista)=>lista.map(([val,txt])=>'<option value="'+val+'"'+(v===val?' selected':'')+'>'+txt+'</option>').join('');
+  document.getElementById('avisos-lista').innerHTML = _avisos.map((a,i)=>`
+    <div class="card" style="border-left:4px solid ${_escA(a.cor||'#f97316')}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px">
+        <label style="display:flex;gap:8px;align-items:center;font-size:.82rem;font-weight:700;cursor:pointer">
+          <input type="checkbox" ${a.ativo?'checked':''} onchange="_avisos[${i}].ativo=this.checked"> Ativo
+        </label>
+        <button class="btn-danger" onclick="_avisos.splice(${i},1);renderAvisos()">Remover</button>
+      </div>
+      <div class="row3">
+        <div class="field"><label>ID (único, sem espaço)</label><input value="${_escA(a.id)}" oninput="_avisos[${i}].id=this.value.replace(/[^\\w-]/g,'')"></div>
+        <div class="field"><label>Local</label><select onchange="_avisos[${i}].local=this.value">${opt(a.local||'home',[['home','Card na home'],['topo','Faixa no topo']])}</select></div>
+        <div class="field"><label>Público</label><select onchange="_avisos[${i}].publico=this.value">${opt(a.publico||'todos',[['todos','Todos'],['mensal','Só plano mensal'],['anual','Só plano anual']])}</select></div>
+      </div>
+      <div class="field"><label>Título</label><input value="${_escA(a.titulo)}" oninput="_avisos[${i}].titulo=this.value"></div>
+      <div class="field"><label>Texto (opcional)</label><input value="${_escA(a.texto)}" oninput="_avisos[${i}].texto=this.value"></div>
+      <div class="row2">
+        <div class="field"><label>Texto do botão</label><input value="${_escA(a.botao)}" oninput="_avisos[${i}].botao=this.value"></div>
+        <div class="field"><label>Link do botão (https://...)</label><input value="${_escA(a.link)}" oninput="_avisos[${i}].link=this.value"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Cor</label><input type="color" value="${_escA(a.cor||'#f97316')}" style="height:38px;padding:3px" onchange="_avisos[${i}].cor=this.value;renderAvisos()"></div>
+        <div class="field"><label>Ícone</label><select onchange="_avisos[${i}].icone=this.value">${opt(a.icone||'info',[['info','Informação'],['estrela','Estrela'],['livro','Livro / curso'],['megafone','Megafone'],['presente','Presente']])}</select></div>
+      </div>
+    </div>`).join('') || '<div class="card" style="font-size:.8rem;color:var(--text2)">Nenhum aviso. Clique em "+ Novo aviso".</div>';
+}
+
+function novoAviso(){
+  _avisos.push({ id:'aviso-'+Date.now().toString(36), ativo:false, local:'home', publico:'todos', cor:'#f97316', icone:'megafone', titulo:'', texto:'', botao:'', link:'' });
+  renderAvisos();
+}
+function restaurarAvisosPadrao(){
+  if(!confirm('Substituir a lista pelos avisos padrão (anual + Método Real)?')) return;
+  _avisos = JSON.parse(JSON.stringify(AVISOS_PADRAO_ADMIN)); renderAvisos();
+}
+async function salvarAvisos(){
+  const ok=document.getElementById('avisos-ok'), err=document.getElementById('avisos-err');
+  ok.style.display='none'; err.style.display='none';
+  const ids=_avisos.map(a=>a.id);
+  const problema = _avisos.find(a=>!a.id||!a.titulo) ? 'Todo aviso precisa de ID e título.'
+    : (new Set(ids).size!==ids.length ? 'Há IDs repetidos.'
+    : (_avisos.find(a=>a.link && !/^https:\/\//i.test(a.link)) ? 'Os links precisam começar com https://' : ''));
+  if(problema){ err.textContent=problema; err.style.display='block'; return; }
+  try{
+    await db.collection('config').doc('avisos').set({ lista:_avisos, atualizadoEm:Date.now() });
+    ok.style.display='block';
+  }catch(e){ err.textContent='Erro ao salvar: '+e.message; err.style.display='block'; }
+}
+</script>
 </body>
 </html>
