@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bem-vindo | Calculadora REAL</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.png">
+<style>
+  :root{--bg:#0f0f12;--card:#17171c;--text:#ececf1;--text2:#a1a1aa;--o:#f97316;--p:#7c3aed;--border:#2a2a32}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px 24px;max-width:520px;width:100%}
+  .logo{display:block;height:46px;margin:0 auto 18px}
+  .ok{display:inline-block;background:#16a34a22;color:#4ade80;border:1px solid #16a34a55;border-radius:999px;padding:4px 12px;font-size:.75rem;font-weight:700;letter-spacing:.04em}
+  h1{font-size:1.45rem;margin:14px 0 6px}
+  p{color:var(--text2);font-size:.95rem;margin:0 0 18px}
+  ol{list-style:none;padding:0;margin:0 0 24px;counter-reset:p}
+  li{counter-increment:p;position:relative;padding:12px 0 12px 46px;border-top:1px solid var(--border);font-size:.95rem}
+  li::before{content:counter(p);position:absolute;left:0;top:12px;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--o));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+  li strong{color:var(--text)}
+  .btn{display:block;text-align:center;background:var(--text);color:#111;text-decoration:none;font-weight:800;border-radius:12px;padding:15px;font-size:1rem}
+  .ajuda{text-align:center;font-size:.8rem;color:var(--text2);margin-top:16px}
+  .ajuda a{color:var(--o)}
+</style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="logo.png" alt="realecom">
+    <div style="text-align:center"><span class="ok">✓ PAGAMENTO CONFIRMADO</span></div>
+    <h1 style="text-align:center">Seu acesso à Calculadora REAL está liberado</h1>
+    <p style="text-align:center">São só 3 passos para começar:</p>
+    <ol>
+      <li>Clique no botão abaixo e digite <strong>o mesmo e-mail que você usou nesta compra</strong>.</li>
+      <li>Clique em <strong>“Primeiro acesso? Criar minha senha”</strong>. Vai chegar no seu e-mail um link da <strong>Calculadora REAL</strong> para criar a senha (confira também o spam).</li>
+      <li>Entre com o e-mail e a senha criada e <strong>conecte sua conta do Mercado Livre</strong>. Pronto!</li>
+    </ol>
+    <a class="btn" href="https://calculadorarealecom.com.br/?primeiro=1">Acessar a Calculadora →</a>
+    <div class="ajuda">Salve este endereço: <strong>calculadorarealecom.com.br</strong><br>Precisa de ajuda? <a href="https://wa.me/5521979509790" target="_blank" rel="noopener">Fale com a gente no WhatsApp</a></div>
+  </main>
+</body>
+</html>

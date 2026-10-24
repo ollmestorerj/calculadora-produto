@@ -4994,3 +4994,17 @@ async function concluirConexaoML(code){
     atualizarBotaoConectar();
   }
 }
+
+// Vindo da página de boas-vindas da Kiwify (?primeiro=1): destaca o primeiro acesso
+(function(){
+  try{
+    if(new URLSearchParams(location.search).get('primeiro')!=='1') return;
+    window.addEventListener('load', function(){
+      const el=document.getElementById('login-validade');
+      if(!el) return;
+      el.style.display='block';
+      el.textContent='👋 Primeiro acesso: digite o e-mail da sua compra e clique em “Primeiro acesso? Criar minha senha”.';
+      const em=document.getElementById('login-email'); if(em) em.focus();
+    });
+  }catch(e){}
+})();
