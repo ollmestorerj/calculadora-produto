@@ -5024,7 +5024,7 @@ const AVISOS_PADRAO = [
   { id:'metodo-real', ativo:true, local:'home', publico:'todos', cor:'#7c3aed', icone:'livro',
     titulo:'Método Real: aprenda a montar a sua operação no Mercado Livre',
     texto:'Curso gravado da realecom: estrutura da loja, conta, logística a partir de SP, precificação e demanda.',
-    botao:'Conhecer o Método Real', link:'https://pay.kiwify.com.br/RCQ6nBI' }
+    botao:'Conhecer o Método Real', link:'https://landing.realecom.app/metodo-real/' }
 ];
 
 const AVISO_ICONES = {
