@@ -4714,7 +4714,7 @@ const AULAS_MODULOS = [
   },
   {
     badge: "BLOCO 3", cor: "#ea580c",
-    titulo: "Como Vender", contagem: "7 aulas",
+    titulo: "Como Vender", contagem: "8 aulas",
     grupos: [
       { nome: null, aulas: [
         { titulo: "Passo a Passo do Anúncio", desc: "O passo a passo para montar um anúncio no Mercado Livre.", url: "https://drive.google.com/file/d/11rA5vS7rpIslEC4r3-147VzV2u7LLlTK/view", tipo: 'video' },
@@ -4722,6 +4722,7 @@ const AULAS_MODULOS = [
         { titulo: "Preenchendo os Dados Fiscais do Anúncio", desc: "Como preencher a parte fiscal do anúncio no Mercado Livre.", url: "https://drive.google.com/file/d/1o3LmOct6Sh37Z1fu3NUXUFB90EuDTNyt/view", tipo: 'video' },
         { titulo: "Execução, Ajuste, Medição", desc: "O ciclo de executar, ajustar e medir os resultados.", url: "https://drive.google.com/file/d/1ofoYDRdgNezYrQCGa83zim2_8g3AVVk_/view", tipo: 'video' },
         { titulo: "Despachando a Venda", desc: "O que fazer quando a venda cai: separar, embalar e despachar o pedido.", url: "https://drive.google.com/file/d/1FfUOGybRbBV6ASRags95EqzRHpaluPVj/view", tipo: 'video' },
+        { titulo: "Montando o Envio Full", desc: "Como montar e mandar o envio para o Full do Mercado Livre.", url: "https://drive.google.com/file/d/1r7aGnZoDZ_FGMTGc3BU2ppwuLlG1yD98/view", tipo: 'video' },
         { titulo: "Acelerador Real", desc: "Conheça o Acelerador Real.", url: "https://drive.google.com/file/d/1fauitsrV3hGK6puqcq3xNmYA6GFIOqkN/view", tipo: 'video' },
         { titulo: "Finalização", desc: "Encerramento do curso.", url: "https://drive.google.com/file/d/1BJsVRK4QDWmPfaHE7d5Vf7dDwot6Ztc6/view", tipo: 'video' },
       ]},
