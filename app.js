@@ -3780,8 +3780,8 @@ function concDetectarTipo(raw0, nome){
 
 function concTipoLabel(t){
   return {vendas:'Conciliação por Vendas (ML)', liberacoes:'Conciliação por Liberações (ML)',
-    collection:'Cobranças — collection (MP)', withdraw:'Saques — withdraw (MP)',
-    afterCollection:'Reclamações — after_collection (MP)'}[t] || t;
+    collection:'Vendas (Mercado Pago)', withdraw:'Saques (Mercado Pago)',
+    afterCollection:'Reclamações (Mercado Pago)'}[t] || t;
 }
 
 function concRemoverArquivo(tipo){
@@ -3793,7 +3793,7 @@ function concRenderArquivos(){
   var el = document.getElementById('conc-files-lista');
   if(!el) return;
   var tipos = ['vendas','liberacoes','collection','withdraw','afterCollection'];
-  var labels = {vendas:'Vendas ML', liberacoes:'Liberações ML', collection:'Cobranças MP', withdraw:'Saques MP', afterCollection:'Reclamações MP'};
+  var labels = {vendas:'Mercado Livre · Por vendas', liberacoes:'Mercado Livre · Por liberação de dinheiro', collection:'Mercado Pago · Vendas (opcional)', withdraw:'Mercado Pago · Saques (opcional)', afterCollection:'Mercado Pago · Reclamações (opcional)'};
   var cores = {vendas:'#7c3aed44', liberacoes:'#16a34a44', collection:'#0891b244', withdraw:'#d9770644', afterCollection:'#dc262644'};
   el.innerHTML = tipos.map(function(t){
     var tem = !!_concFiles[t];
