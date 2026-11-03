@@ -1952,10 +1952,51 @@ function exportarExcel(){
     <!-- UPLOAD -->
     <div class="card" style="padding:16px;margin-bottom:14px;border-color:#0891b244">
       <div style="font-family:'Figtree',sans-serif;font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:4px">CARREGAR RELATÓRIOS</div>
-      <div style="font-size:.72rem;color:var(--text4);margin-bottom:12px;line-height:1.6">
-        <strong style="color:var(--text3)">Mercado Livre:</strong> Menu → Faturamento → Tarifas e Pagamentos → Conciliação (obrigatório, baixar Vendas e Liberações)<br>
-        <strong style="color:var(--text3)">Mercado Pago:</strong> Site (PC) → Relatórios → Extrair relatórios de venda e recebimento → baixar em XLS (opcional)
-      </div>
+      <div class="conc-guia">
+          <div class="conc-passo">
+            <div class="conc-passo-top"><span class="conc-num">1</span><div><b>Relatórios do Mercado Livre</b><small>Obrigatório · são 2 arquivos</small></div></div>
+            <ol>
+              <li>Entre no <strong>Mercado Livre</strong> pelo computador.</li>
+              <li>Clique em <strong>Menu</strong> e depois em <strong>Faturamento</strong>.</li>
+              <li>Clique em <strong>Tarifas e Pagamentos</strong>.</li>
+              <li>Clique em <strong>Conciliação</strong>.</li>
+              <li>Escolha o <strong>mês</strong> que você quer conferir.</li>
+              <li>Baixe o relatório de <strong>Vendas</strong> em Excel.</li>
+              <li>Baixe também o relatório de <strong>Liberações</strong> em Excel.</li>
+            </ol>
+          </div>
+          <div class="conc-passo">
+            <div class="conc-passo-top"><span class="conc-num">2</span><div><b>Relatório do Mercado Pago</b><small>Opcional · 1 arquivo · mostra se o dinheiro caiu certo</small></div></div>
+            <ol>
+              <li>Entre no <strong>Mercado Pago</strong> pelo <strong>computador</strong>, no site.</li>
+              <li>No menu, clique em <strong>Relatórios</strong>.</li>
+              <li>Clique em <strong>Vendas</strong>.</li>
+              <li>Escolha o <strong>mesmo mês</strong> do relatório do Mercado Livre.</li>
+              <li>Baixe em <strong>Excel</strong>.</li>
+            </ol>
+            <p class="conc-aviso">Não use o relatório <strong>"Fechar e conciliar mês"</strong>. Ele não traz o número da venda, então não dá para conferir venda por venda.</p>
+          </div>
+          <div class="conc-passo">
+            <div class="conc-passo-top"><span class="conc-num">3</span><div><b>Coloque os arquivos aqui embaixo</b><small>Pode colocar todos de uma vez</small></div></div>
+            <ol>
+              <li>Arraste os arquivos para o quadro abaixo, ou clique nele e escolha os arquivos.</li>
+              <li>Espere aparecer a bolinha verde do lado de cada um.</li>
+              <li>Clique em <strong>Conciliar agora</strong>.</li>
+            </ol>
+          </div>
+        </div>
+        <style>
+        .conc-guia{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+        .conc-passo{background:var(--card2,rgba(255,255,255,.03));border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+        .conc-passo-top{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+        .conc-num{width:26px;height:26px;border-radius:50%;background:#0891b2;color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .conc-passo-top b{display:block;font-size:.8rem;color:var(--text)}
+        .conc-passo-top small{display:block;font-size:.68rem;color:var(--text4);margin-top:1px}
+        .conc-passo ol{margin:0;padding-left:18px;font-size:.74rem;color:var(--text3);line-height:1.65}
+        .conc-passo ol strong{color:var(--text)}
+        .conc-aviso{margin:8px 0 0;font-size:.7rem;line-height:1.5;color:var(--text3);background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25);border-radius:7px;padding:7px 9px}
+        @media(max-width:900px){.conc-guia{grid-template-columns:1fr}}
+        </style>
 
       <!-- Drop zone -->
       <div id="conc-drop"

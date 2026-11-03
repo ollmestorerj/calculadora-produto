@@ -3740,7 +3740,8 @@ function concProcessFiles(files){
         // Detecta tipo pelo cabeçalho da linha 2 (ML) ou 0 (MP)
         var raw0 = XLSX.utils.sheet_to_json(ws, {range:0, header:1, defval:''});
         var tipo = concDetectarTipo(raw0, file.name);
-        if(!tipo){ concToast('Arquivo não reconhecido: ' + file.name, 'err'); return; }
+        if(tipo==='settlement'){ concToast('Esse é o relatório "Fechar e conciliar mês" do Mercado Pago. Aqui precisa ser o de Vendas: Mercado Pago no computador → Relatórios → Vendas.', 'err'); return; }
+        if(!tipo){ concToast('Arquivo não reconhecido: ' + file.name + '. Confira o passo a passo acima.', 'err'); return; }
         var headerRow = (tipo==='collection'||tipo==='withdraw'||tipo==='afterCollection') ? 0 : 2;
         var dados = XLSX.utils.sheet_to_json(ws, {range:headerRow, defval:''});
         _concFiles[tipo] = dados;
@@ -3765,6 +3766,8 @@ function concDetectarTipo(raw0, nome){
   if(cols0.indexOf('Número da venda no Mercado Livre')>=0) return 'collection';
   if(cols0.indexOf('Número da retirada')>=0 || cols0.indexOf('withdraw_id')>=0) return 'withdraw';
   if(cols0.indexOf('Fluxo (flow)')>=0) return 'afterCollection';
+  // Relatório "Fechar e conciliar mês" (settlement) — não serve: não tem o número da venda
+  if(cols0.indexOf('ID DA TRANSAÇÃO NO MERCADO PAGO')>=0 || cols0.indexOf('VALOR LÍQUIDO DA TRANSAÇÃO')>=0) return 'settlement';
   // fallback por nome
   var n = nome.toLowerCase();
   if(n.indexOf('venda')>=0||n.indexOf('sale')>=0) return 'vendas';
