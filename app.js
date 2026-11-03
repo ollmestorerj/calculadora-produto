@@ -3740,7 +3740,7 @@ function concProcessFiles(files){
         // Detecta tipo pelo cabeçalho da linha 2 (ML) ou 0 (MP)
         var raw0 = XLSX.utils.sheet_to_json(ws, {range:0, header:1, defval:''});
         var tipo = concDetectarTipo(raw0, file.name);
-        if(tipo==='settlement'){ concToast('Esse é o relatório "Fechar e conciliar mês" do Mercado Pago. Aqui precisa ser o de Vendas: Mercado Pago no computador → Relatórios → Vendas.', 'err'); return; }
+        if(tipo==='settlement'){ concToast('Esse é o relatório "Fechar e conciliar mês" do Mercado Pago. Aqui precisa ser o de Vendas: Mercado Pago no computador → Relatórios → Ver meus recebimentos e movimentações → Vendas.', 'err'); return; }
         if(!tipo){ concToast('Arquivo não reconhecido: ' + file.name + '. Confira o passo a passo acima.', 'err'); return; }
         var headerRow = (tipo==='collection'||tipo==='withdraw'||tipo==='afterCollection') ? 0 : 2;
         var dados = XLSX.utils.sheet_to_json(ws, {range:headerRow, defval:''});
@@ -3780,8 +3780,8 @@ function concDetectarTipo(raw0, nome){
 
 function concTipoLabel(t){
   return {vendas:'Conciliação por Vendas (ML)', liberacoes:'Conciliação por Liberações (ML)',
-    collection:'Vendas (Mercado Pago)', withdraw:'Saques (Mercado Pago)',
-    afterCollection:'Reclamações (Mercado Pago)'}[t] || t;
+    collection:'Vendas (Mercado Pago)', withdraw:'Retiradas (Mercado Pago)',
+    afterCollection:'Pós-venda (Mercado Pago)'}[t] || t;
 }
 
 function concRemoverArquivo(tipo){
@@ -3793,7 +3793,7 @@ function concRenderArquivos(){
   var el = document.getElementById('conc-files-lista');
   if(!el) return;
   var tipos = ['vendas','liberacoes','collection','withdraw','afterCollection'];
-  var labels = {vendas:'Mercado Livre · Por vendas', liberacoes:'Mercado Livre · Por liberação de dinheiro', collection:'Mercado Pago · Vendas (opcional)', withdraw:'Mercado Pago · Saques (opcional)', afterCollection:'Mercado Pago · Reclamações (opcional)'};
+  var labels = {vendas:'Mercado Livre · Por vendas', liberacoes:'Mercado Livre · Por liberação de dinheiro', collection:'Mercado Pago · Vendas (opcional)', withdraw:'Mercado Pago · Retiradas (opcional)', afterCollection:'Mercado Pago · Pós-venda (opcional)'};
   var cores = {vendas:'#7c3aed44', liberacoes:'#16a34a44', collection:'#0891b244', withdraw:'#d9770644', afterCollection:'#dc262644'};
   el.innerHTML = tipos.map(function(t){
     var tem = !!_concFiles[t];
